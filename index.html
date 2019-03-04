@@ -5,17 +5,18 @@
   
 
   
-  <title>ImAndup</title>
+  <title>ImAndy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="ImAndup">
+  <meta name="keywords" content="keywords keywords">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ImAndy">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="ImAndup">
+<meta property="og:site_name" content="ImAndy">
 <meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ImAndup">
+<meta name="twitter:title" content="ImAndy">
   
-    <link rel="alternate" href="/atom.xml" title="ImAndup" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="ImAndy" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -34,7 +35,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">ImAndup</a>
+        <a href="/" id="logo">ImAndy</a>
       </h1>
       
         <h2 id="subtitle-wrap">
@@ -65,6 +66,142 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-给定一个整数数组-nums-和一个目标值-target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/03/04/给定一个整数数组-nums-和一个目标值-target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。/" class="article-date">
+  <time datetime="2019-03-04T15:11:09.000Z" itemprop="datePublished">2019-03-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/04/给定一个整数数组-nums-和一个目标值-target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。/">给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="题目描述：给定一个整数数组-nums-和一个目标值-target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。"><a href="#题目描述：给定一个整数数组-nums-和一个目标值-target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。" class="headerlink" title="题目描述：给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。"></a>题目描述：给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。</h4><h4 id="思路："><a href="#思路：" class="headerlink" title="思路："></a>思路：</h4><ol>
+<li>题目是要求nums中有两个数和是target，那么就应该是nums中会存在一个target - nums[i]的数，这种变换思维是要具备，即当题目需要得到什么结果，将这个结果推到出等价的描述，得到一些充分条件或者必要条件，在想办法（算法）去得到这些条件，当然也要具备一些基础知识，比如hash思想，知道hash方法它有哪些应用场景和它还有可能解决什么问题。</li>
+<li>题目转换为nums中找到一个target - nums[i]的数，那么可以先得到这些target - nums[i]，即得到两个nums.length大小的数组，再去找到两个数组中相同的数，找到相同的数，最容易的方法就是通过hash思想，有很多类似找相同数或者元素都有借助hash思想。<h4 id="伪代码："><a href="#伪代码：" class="headerlink" title="伪代码："></a>伪代码：</h4>略<h4 id="java代码"><a href="#java代码" class="headerlink" title="java代码"></a>java代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    *  题目1：给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。</span><br><span class="line">    *  你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素</span><br><span class="line">    *  注：此解决方法有问题，会申请大量内存，优化方向为动态hash表即官方解法。</span><br><span class="line">    *  e.g: 给定 nums = [2, 7, 11, 15], target = 9</span><br><span class="line">    *       因为 nums[0] + nums[1] = 2 + 7 = 9</span><br><span class="line">    *       所以返回 [0, 1]</span><br><span class="line">    * @param nums</span><br><span class="line">    * @param target</span><br><span class="line">    * @return</span><br><span class="line">    */</span><br><span class="line">   private static int[] solution01(int[] nums, int target) &#123;</span><br><span class="line">       int length = nums.length;</span><br><span class="line">       if (length &lt;= 0) &#123;</span><br><span class="line">           throw new IllegalArgumentException();</span><br><span class="line">       &#125;</span><br><span class="line">       // 先找到nums中最小值和最大值</span><br><span class="line">       int min = nums[0], max = nums[0];</span><br><span class="line">       for (int i = 0; i &lt; length; i++) &#123;</span><br><span class="line">           if (nums[i] &gt; max) &#123;</span><br><span class="line">               max = nums[i];</span><br><span class="line">           &#125;</span><br><span class="line">           if (nums[i] &lt; min) &#123;</span><br><span class="line">               min = nums[i];</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       int offset = -min, tableSize = max - min + 1;</span><br><span class="line">       int[] map = new int[tableSize];</span><br><span class="line">       for (int i = 0; i &lt; tableSize; i++) &#123;</span><br><span class="line">           map[i] = -1;</span><br><span class="line">       &#125;</span><br><span class="line">       for (int i = 0; i &lt; length * 2; i++) &#123;</span><br><span class="line">           if (i &lt; length) &#123;</span><br><span class="line">               // 在map中记录下nums的位置信息</span><br><span class="line">               map[nums[i] + offset] = i;</span><br><span class="line">           &#125; else &#123;</span><br><span class="line">               int index = target - nums[i - length] + offset;</span><br><span class="line">               if (0 &lt;= index &amp;&amp; index &lt; tableSize &amp;&amp; map[index] != -1 &amp;&amp; map[index] != i - length) &#123;</span><br><span class="line">                   return new int[]&#123;i - length, map[index]&#125;;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       throw new IllegalArgumentException();</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   /**</span><br><span class="line">    * 题目1 官方解答</span><br><span class="line">    * @param nums</span><br><span class="line">    * @param target</span><br><span class="line">    * @return</span><br><span class="line">    */</span><br><span class="line">   private static int[] solution02(int[] nums, int target) &#123;</span><br><span class="line">       Map&lt;Integer, Integer&gt; map = new HashMap&lt;Integer, Integer&gt;();</span><br><span class="line">       for (int i = 0; i &lt; nums.length; i++) &#123;</span><br><span class="line">           int complement = target - nums[i];</span><br><span class="line">           if (map.containsKey(complement)) &#123;</span><br><span class="line">               return new int[] &#123; map.get(complement), i &#125;;</span><br><span class="line">           &#125;</span><br><span class="line">           map.put(nums[i], i);</span><br><span class="line">       &#125;</span><br><span class="line">       throw new IllegalArgumentException(&quot;No two sum solution&quot;);</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>solution01算法时间复杂度为O(n)，但空间复杂度根据nums的元素决定可能会特别大，该方法不可取。<br>solution02算法时间leetCode上说是复杂度是O(n)，但我认为应该是大于O(n)，因为map.put(nums[i], i);这个操作时间复杂度可能会是log(n)，所以整体复杂度应该略大于O(n)。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/03/04/给定一个整数数组-nums-和一个目标值-target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。/" data-id="cjsuhg9860000330eeyo162ju" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串-Java版本" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/02/27/给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串-Java版本/" class="article-date">
+  <time datetime="2019-02-27T14:01:29.000Z" itemprop="datePublished">2019-02-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/02/27/给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串-Java版本/">给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串-Java版本</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="题目描述：给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串"><a href="#题目描述：给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串" class="headerlink" title="题目描述：给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串"></a>题目描述：给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串</h2><h4 id="思路："><a href="#思路：" class="headerlink" title="思路："></a>思路：</h4><ol>
+<li>从特殊到一般<br>abc -&gt; abcabc，aba -&gt; ababa，aaa -&gt; aaaa，abcdab -&gt; abcdabcdab</li>
+<li>论证确实是寻找包含s中最后一个字符的s的子串与包含s中第一个字符的s的子串相等的最长子串。</li>
+</ol>
+<ul>
+<li>显然result.length &gt; s.length</li>
+<li>abcdab -&gt; abcdabcd   不能是 abcdabcddc非最短字符串</li>
+</ul>
+<ol start="3">
+<li>证明</li>
+</ol>
+<ul>
+<li>若result[0…r]为输出的最短字符串，<br>因r &lt;= s.length时，不可能出现两个s作为子串，<br>则r &gt; s.length。</li>
+<li>其他证明略，比较明显。</li>
+</ul>
+<hr>
+<h4 id="伪代码："><a href="#伪代码：" class="headerlink" title="伪代码："></a>伪代码：</h4><hr>
+<h4 id="java代码"><a href="#java代码" class="headerlink" title="java代码"></a>java代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">   * 题目：给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串</span><br><span class="line">   * e.g：1. 输入abc，输出abcabc  2. 输入abcdab，输出abcdabcd，3. 输入aaa，输出aaaa</span><br><span class="line">   * @param s</span><br><span class="line">   * @return result</span><br><span class="line">   */</span><br><span class="line">  private static char[] solution01(char[] s) &#123;</span><br><span class="line">      int length = s.length;</span><br><span class="line">      // 记录上一次迭代s(0...i-1)字符串头尾有相同的字符串的字符个数</span><br><span class="line">      int dp = 0;</span><br><span class="line">      int i = 1;</span><br><span class="line">      while (i &lt; length) &#123;</span><br><span class="line">          if (s[dp] == s[i]) dp++;</span><br><span class="line">          else dp = 0;</span><br><span class="line">          i++;</span><br><span class="line">      &#125;</span><br><span class="line">      if (dp == length - 1) &#123;</span><br><span class="line">          // s = &quot;a&quot; 或者 s = &quot;aaaa&quot;</span><br><span class="line">          char[] result = new char[length + 1];</span><br><span class="line">          System.arraycopy(s, 0, result, 0, length);</span><br><span class="line">          result[length] = s[0];</span><br><span class="line">          return result;</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">          char[] result = new char[2 * length - dp];</span><br><span class="line">          System.arraycopy(s, 0, result, 0, length);</span><br><span class="line">          System.arraycopy(s, dp, result, length, length - dp);</span><br><span class="line">          return result;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  /**</span><br><span class="line">   * 只满足s中只有26个英文字母</span><br><span class="line">   * @param s</span><br><span class="line">   * @return</span><br><span class="line">   */</span><br><span class="line">  private static char[] solution02(char[] s) &#123;</span><br><span class="line"></span><br><span class="line">      int length = s.length;</span><br><span class="line">      int i = 0, j = length - 1;</span><br><span class="line">      int head = 0, tail = 0, dp = 0;</span><br><span class="line">      while (i &lt; length - 1) &#123;</span><br><span class="line">          head = head * 26 + (s[i] - &apos;a&apos; + 1);</span><br><span class="line">          tail = tail + (s[j] - &apos;a&apos; + 1) * (int)Math.pow(26, i);</span><br><span class="line">          if (head == tail) &#123;</span><br><span class="line">              dp = i + 1;</span><br><span class="line">          &#125;</span><br><span class="line">          i++; j--;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      if (dp == length - 1) &#123;</span><br><span class="line">          // s = &quot;a&quot; 或者 s = &quot;aaaa&quot;</span><br><span class="line">          char[] result = new char[length + 1];</span><br><span class="line">          System.arraycopy(s, 0, result, 0, length);</span><br><span class="line">          result[length] = s[0];</span><br><span class="line">          return result;</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">          char[] result = new char[2 * length - dp];</span><br><span class="line">          System.arraycopy(s, 0, result, 0, length);</span><br><span class="line">          System.arraycopy(s, dp, result, length, length - dp);</span><br><span class="line">          return result;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  private static char[] solution03(char[] s) &#123;</span><br><span class="line">      return new char[2];</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">      public static void main(String[] args) &#123;</span><br><span class="line">      System.out.println(&quot;----------solution01-------------&quot;);</span><br><span class="line">      // a</span><br><span class="line">      char[] s1 = &quot;a&quot;.toCharArray();</span><br><span class="line">      System.out.println(&quot;输入: &quot; + String.valueOf(s1)</span><br><span class="line">              + &quot;, 输出: &quot; + String.valueOf(solution01(s1)));</span><br><span class="line">      // aaa</span><br><span class="line">      char[] s2 = &quot;aaa&quot;.toCharArray();</span><br><span class="line">      System.out.println(&quot;输入: &quot; + String.valueOf(s2)</span><br><span class="line">              + &quot;, 输出: &quot; + String.valueOf(solution01(s2)));</span><br><span class="line">      // abc</span><br><span class="line">      char[] s3 = &quot;abc&quot;.toCharArray();</span><br><span class="line">      System.out.println(&quot;输入: &quot; + String.valueOf(s3)</span><br><span class="line">              + &quot;, 输出: &quot; + String.valueOf(solution01(s3)));</span><br><span class="line">      // abcdabc</span><br><span class="line">      char[] s4 = &quot;abcdabc&quot;.toCharArray();</span><br><span class="line">      System.out.println(&quot;输入: &quot; + String.valueOf(s4)</span><br><span class="line">              + &quot;, 输出: &quot; + String.valueOf(solution01(s4)));</span><br><span class="line"></span><br><span class="line">      System.out.println(&quot;----------solution02-------------&quot;);</span><br><span class="line">      // a</span><br><span class="line">      System.out.println(&quot;输入: &quot; + String.valueOf(s1)</span><br><span class="line">              + &quot;, 输出: &quot; + String.valueOf(solution02(s1)));</span><br><span class="line">      // aaa</span><br><span class="line">      System.out.println(&quot;输入: &quot; + String.valueOf(s2)</span><br><span class="line">              + &quot;, 输出: &quot; + String.valueOf(solution02(s2)));</span><br><span class="line">      // abc</span><br><span class="line">      System.out.println(&quot;输入: &quot; + String.valueOf(s3)</span><br><span class="line">              + &quot;, 输出: &quot; + String.valueOf(solution02(s3)));</span><br><span class="line">      // abcdabc</span><br><span class="line">      System.out.println(&quot;输入: &quot; + String.valueOf(s4)</span><br><span class="line">              + &quot;, 输出: &quot; + String.valueOf(solution02(s4)));</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h4 id="算法复杂度"><a href="#算法复杂度" class="headerlink" title="算法复杂度"></a>算法复杂度</h4><p>solution01和solution02算法复杂度都是O(n)。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/02/27/给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串-Java版本/" data-id="cjsuhg98f0004330ee87r6c8d" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java-算法-面试-java-算法-面试/">java 算法 面试 - java - 算法 - 面试</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hexo学习实践" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/02/01/hexo学习实践/" class="article-date">
+  <time datetime="2019-02-01T06:41:30.000Z" itemprop="datePublished">2019-02-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/02/01/hexo学习实践/">hexo学习实践</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/02/01/hexo学习实践/" data-id="cjsuhg98c0002330e4neh7gfl" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-JavaWeb-SSM" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -209,129 +346,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/12/24/JavaWeb-SSM/" data-id="cjq2m1zc60001jj0efo88s49t" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/12/24/JavaWeb-SSM/" data-id="cjsuhg98e0003330e84m5l83i" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javaWeb/">javaWeb</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javaWeb-java-后端-spring/">javaWeb java 后端 spring</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-test-1" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/12/24/test-1/" class="article-date">
-  <time datetime="2018-12-24T15:30:10.000Z" itemprop="datePublished">2018-12-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/12/24/test-1/">test</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/12/24/test-1/" data-id="cjq2m1zca0004jj0e1dmpp3gs" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-test" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/06/18/test/" class="article-date">
-  <time datetime="2018-06-18T14:17:55.000Z" itemprop="datePublished">2018-06-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/18/test/">test</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>ceshi</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/06/18/test/" data-id="cjq2m1zc70002jj0ey8wc94f3" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/06/18/hello-world/" class="article-date">
-  <time datetime="2018-06-18T14:07:54.720Z" itemprop="datePublished">2018-06-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/18/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/06/18/hello-world/" data-id="cjq2m1zbp0000jj0eilzlhkk3" class="article-share-link">Share</a>
-      
-      
     </footer>
   </div>
   
@@ -352,7 +371,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/javaWeb/">javaWeb</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/java-算法-面试-java-算法-面试/">java 算法 面试 - java - 算法 - 面试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javaWeb-java-后端-spring/">javaWeb java 后端 spring</a></li></ul>
     </div>
   </div>
 
@@ -362,7 +381,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/javaWeb/" style="font-size: 10px;">javaWeb</a>
+      <a href="/tags/java-算法-面试-java-算法-面试/" style="font-size: 10px;">java 算法 面试 - java - 算法 - 面试</a> <a href="/tags/javaWeb-java-后端-spring/" style="font-size: 10px;">javaWeb java 后端 spring</a>
     </div>
   </div>
 
@@ -371,7 +390,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li></ul>
     </div>
   </div>
 
@@ -384,19 +403,19 @@
       <ul>
         
           <li>
+            <a href="/2019/03/04/给定一个整数数组-nums-和一个目标值-target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。/">给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/27/给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串-Java版本/">给定一个字符串s，请计算输出含有连续两个s作为子串的最短字符串-Java版本</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/01/hexo学习实践/">hexo学习实践</a>
+          </li>
+        
+          <li>
             <a href="/2018/12/24/JavaWeb-SSM/">[JavaWeb]SSM框架整合 idea+spring+springMVC+Mybatis框架搭建教程</a>
-          </li>
-        
-          <li>
-            <a href="/2018/12/24/test-1/">test</a>
-          </li>
-        
-          <li>
-            <a href="/2018/06/18/test/">test</a>
-          </li>
-        
-          <li>
-            <a href="/2018/06/18/hello-world/">Hello World</a>
           </li>
         
       </ul>
@@ -411,7 +430,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 John Doe<br>
+      &copy; 2019 John Doe<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
