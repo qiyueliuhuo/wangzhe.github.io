@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>机器学习</title>
+      <link href="/2020/05/24/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+      <url>/2020/05/24/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</url>
+      
+        <content type="html"><![CDATA[<p>绪论</p><p>机器学习（machine learing, ML）<br>人工智能（artificial intelligence, AI）<br>深度学习（deep learing）</p><p>分类问题<br>回归问题<br>聚类问题</p><p>有监督学习、无监督学习</p><p>模型评估与选择</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>数据库之SQL</title>
       <link href="/2020/05/09/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BSQL/"/>
       <url>/2020/05/09/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BSQL/</url>
@@ -234,7 +247,7 @@
       <link href="/2018/10/04/mac%E7%B3%BB%E7%BB%9F%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
       <url>/2018/10/04/mac%E7%B3%BB%E7%BB%9F%E5%BF%AB%E6%8D%B7%E9%94%AE/</url>
       
-        <content type="html"><![CDATA[<h1 id="mac系统"><a href="#mac系统" class="headerlink" title="mac系统"></a>mac系统</h1><h2 id="mac系统-常用快捷键"><a href="#mac系统-常用快捷键" class="headerlink" title="mac系统 常用快捷键"></a>mac系统 常用快捷键</h2><h4 id="按键"><a href="#按键" class="headerlink" title="按键"></a>按键</h4><ul><li>⌘ == Command</li><li>⇧ == Shift</li><li>⇪ == Caps Lock</li><li>⌥ == Option/Alt</li><li>⌃ == Control</li><li>⌫ == Delete(win上back space)</li><li>⏏ == 电源开关键</li></ul><p>辅助软件：CheatSheet 长按Command键提示当前应用的快捷键</p><h4 id="系统"><a href="#系统" class="headerlink" title="系统"></a>系统</h4><ul><li>Command + 空格键 : 切换输入法<h4 id="常用"><a href="#常用" class="headerlink" title="常用"></a>常用</h4></li><li>Command + X : <strong>剪切</strong>所选项并拷贝到剪切板。</li><li>Command + C : <strong>拷贝</strong>到剪切板，适用于访达中的文件。</li><li>Command + V : 将剪切板中的内容<strong>粘贴</strong>到文稿或访达中。</li><li>Command + Z : <strong>撤销</strong>前一个命令。</li><li>Command + Shift + Z : <strong>反撤销</strong>前一个撤销。</li><li>Command + A : <strong>全选</strong>各项。</li><li>Command + F : <strong>查找</strong>文稿中内容或者打开“查找”窗口。</li><li>Command + O : <strong>打开</strong>所选项，或打开一个对话框以选择要打开的文件。</li><li>Command + N : <strong>新建</strong>文稿或窗口。</li><li>Command + I : 显示选中文件的<strong>简介</strong>。</li><li>Command + S : <strong>存储</strong>当前文稿。</li><li>Command + Shift + S : <strong>另存为</strong>。</li><li>Command + W : <strong>关闭</strong>。</li><li>Command + Q : <strong>退出</strong>应用。</li><li>Command + Control + F : <strong>应用全屏</strong>。</li><li>Command + Tab : <strong>切换应用</strong>，在打开的应用中切换到下一个最近使用的应用。</li><li>Command + Shift + Tab : 在<strong>应用程序</strong>间反向切换。</li><li>Command + 逗号（，）: 打开最前面的应用的<strong>偏好设置</strong>。</li><li>Control + 左键/右键 ： <strong>切换桌</strong>面。</li><li>Command + + : <strong>放大</strong>。</li><li>Command + - : <strong>缩小</strong>。<h4 id="移动"><a href="#移动" class="headerlink" title="移动"></a>移动</h4></li><li>Command + 左键 : 移动到行首。</li><li>Command + 右键 : 移动到行尾。</li><li>Option + 左键 : 向左移动一个单词。</li><li>Option + 右键 : 向右移动一个单词。<h4 id="截屏-基于qq应用（qq退出后，截图录屏保持运行）"><a href="#截屏-基于qq应用（qq退出后，截图录屏保持运行）" class="headerlink" title="截屏 基于qq应用（qq退出后，截图录屏保持运行）"></a>截屏 基于qq应用（qq退出后，截图录屏保持运行）</h4></li><li>Command + Control + A : 截屏。</li><li>Command + Control + R : 录屏。<h4 id="截屏-系统自带"><a href="#截屏-系统自带" class="headerlink" title="截屏 系统自带"></a>截屏 系统自带</h4></li><li>Command + Shift + 3 : 截取全屏</li><li>Command + Shift + 4 : 截取任意窗口</li><li>Command + Shift + 4，之后再按空格键 : 截图窗口</li><li>$: defaults write com.apple.screencapture location ~/Desktop/截图图库 ： 设置默认截屏保存路径</li></ul>]]></content>
+        <content type="html"><![CDATA[<h4 id="按键"><a href="#按键" class="headerlink" title="按键"></a>按键</h4><ul><li>⌘ == Command</li><li>⇧ == Shift</li><li>⇪ == Caps Lock</li><li>⌥ == Option/Alt</li><li>⌃ == Control</li><li>⌫ == Delete(win上back space)</li><li>⏏ == 电源开关键</li></ul><p>辅助软件：CheatSheet 长按Command键提示当前应用的快捷键</p><h4 id="系统"><a href="#系统" class="headerlink" title="系统"></a>系统</h4><ul><li>Command + 空格键 : 切换输入法</li></ul><h4 id="常用"><a href="#常用" class="headerlink" title="常用"></a>常用</h4><ul><li>Command + X : <strong>剪切</strong>所选项并拷贝到剪切板。</li><li>Command + C : <strong>拷贝</strong>到剪切板，适用于访达中的文件。</li><li>Command + V : 将剪切板中的内容<strong>粘贴</strong>到文稿或访达中。</li><li>Command + Z : <strong>撤销</strong>前一个命令。</li><li>Command + Shift + Z : <strong>反撤销</strong>前一个撤销。</li><li>Command + A : <strong>全选</strong>各项。</li><li>Command + F : <strong>查找</strong>文稿中内容或者打开“查找”窗口。</li><li>Command + O : <strong>打开</strong>所选项，或打开一个对话框以选择要打开的文件。</li><li>Command + N : <strong>新建</strong>文稿或窗口。</li><li>Command + I : 显示选中文件的<strong>简介</strong>。</li><li>Command + S : <strong>存储</strong>当前文稿。</li><li>Command + Shift + S : <strong>另存为</strong>。</li><li>Command + W : <strong>关闭</strong>。</li><li>Command + Q : <strong>退出</strong>应用。</li><li>Command + Control + F : <strong>应用全屏</strong>。</li><li>Command + Tab : <strong>切换应用</strong>，在打开的应用中切换到下一个最近使用的应用。</li><li>Command + Shift + Tab : 在<strong>应用程序</strong>间反向切换。</li><li>Command + 逗号（，）: 打开最前面的应用的<strong>偏好设置</strong>。</li><li>Control + 左键/右键 ： <strong>切换桌</strong>面。</li><li>Command + + : <strong>放大</strong>。</li><li>Command + - : <strong>缩小</strong>。</li></ul><h4 id="移动"><a href="#移动" class="headerlink" title="移动"></a>移动</h4><ul><li>Command + 左键 : 移动到行首。</li><li>Command + 右键 : 移动到行尾。</li><li>Option + 左键 : 向左移动一个单词。</li><li>Option + 右键 : 向右移动一个单词。</li></ul><h4 id="截屏-基于qq应用（qq退出后，截图录屏保持运行）"><a href="#截屏-基于qq应用（qq退出后，截图录屏保持运行）" class="headerlink" title="截屏 基于qq应用（qq退出后，截图录屏保持运行）"></a>截屏 基于qq应用（qq退出后，截图录屏保持运行）</h4><ul><li>Command + Control + A : 截屏。</li><li>Command + Control + R : 录屏。</li></ul><h4 id="截屏-系统自带"><a href="#截屏-系统自带" class="headerlink" title="截屏 系统自带"></a>截屏 系统自带</h4><ul><li>Command + Shift + 3 : 截取全屏</li><li>Command + Shift + 4 : 截取任意窗口</li><li>Command + Shift + 4，之后再按空格键 : 截图窗口</li><li>$: defaults write com.apple.screencapture location ~/Desktop/截图图库 ： 设置默认截屏保存路径</li></ul>]]></content>
       
       
       
