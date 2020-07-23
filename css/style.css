@@ -107,6 +107,8 @@ div {
   word-wrap: break-word; }
   #sidebar .widget {
     margin-bottom: 30px; }
+    #sidebar .widget a {
+      color: #2ac176; }
     #sidebar .widget .widget-title {
       color: #6E7173;
       line-height: 2.7;
@@ -415,13 +417,13 @@ blockquote,
 .stressed {
   padding: 0 1em;
   color: #6a737d;
-  border-left: 0.25em solid #dfe2e5; }
+  border-left: 0.25em solid #2ac176; }
 
 blockquote::before,
 .stressed-quote::before {
   padding: 0 1em;
-  color: #6a737d;
-  border-left: 0.25em solid #dfe2e5; }
+  color: #6a757d;
+  border-left: 0.25em solid #e5e1df; }
 
 strong,
 b,
