@@ -4,11 +4,24 @@
   
     
     <entry>
+      <title>SSH连接、远程上传下载文件</title>
+      <link href="/2020/07/24/SSH%E8%BF%9E%E6%8E%A5%E3%80%81%E8%BF%9C%E7%A8%8B%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/"/>
+      <url>/2020/07/24/SSH%E8%BF%9E%E6%8E%A5%E3%80%81%E8%BF%9C%E7%A8%8B%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/</url>
+      
+        <content type="html"><![CDATA[<ul><li>ssh <a href="mailto:username@121.163.0.1">username@121.163.0.1</a>    远程登陆121.163.0.1服务器</li><li>scp -r <a href="mailto:username@121.163.0.1">username@121.163.0.1</a>:/home/username/remotefile.txt /home/username/  将远程服务器上remotefile.txt文件拷贝到本机username目录下</li><li>scp -r localfile.txt <a href="mailto:username@192.168.0.1">username@192.168.0.1</a>:/home/username/  将本机上remotefile.txt文件拷贝到远程服务username目录下</li></ul>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>碎碎念</title>
       <link href="/2020/07/20/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
       <url>/2020/07/20/%E7%A2%8E%E7%A2%8E%E5%BF%B5/</url>
       
-        <content type="html"><![CDATA[<p>黄金时代的我。</p>]]></content>
+        <content type="html"><![CDATA[<h2 id="黄金时代的我-20200720"><a class="markdownIt-Anchor" href="#黄金时代的我-20200720"></a> 黄金时代的我。<br />——2020.07.20</h2><h4 id="博客"><a class="markdownIt-Anchor" href="#博客"></a> 博客</h4><p>想写些东西又不知道写什么，一会想写这个，一会又想写那个。有一句话叫“刚你真正去写作时，才会发现自己的思维有多么混乱”，大概就是我现在的状态吧。</p><h4 id="人性"><a class="markdownIt-Anchor" href="#人性"></a> 人性</h4><p>看了关于杭州失踪女子的案件和b站一个关于网恋的故事（标题：网恋不可取？通过知乎，我和北大小姐姐谈恋爱了！），深深感受到人性是多么复杂。</p>]]></content>
       
       
       <categories>
