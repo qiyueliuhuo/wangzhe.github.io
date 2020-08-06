@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。"><meta name="google-site-verification" content="cuGqxeATU6JHVkMtW496dv4O6fcd6ZPUqHLPI1PVmCM"><title>R-CNN论文阅读笔记 | 七月流火</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.1/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.1/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.1/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script><!-- hexo-inject:begin --><!-- hexo-inject:end -->var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '45a8b0e33cead32cd5945b033baa7255';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="//lib.baomitu.com/clipboard.js/2.0.4/clipboard.min.js"></script><script type="text/javascript" src="//lib.baomitu.com/toastr.js/2.1.4/toastr.min.js"></script><link rel="stylesheet" href="//lib.baomitu.com/toastr.js/2.1.4/toastr.min.css"><meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">R-CNN论文阅读笔记</h1><a id="logo" href="/.">七月流火</a><p class="description">记录学习、工作和生活。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/history/"><i class="fa fa-book"> 历史</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">R-CNN论文阅读笔记</h1><div class="post-meta">2020-07-28</div><a class="disqus-comment-count" href="/2020/07/28/R-CNN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/#vcomment"><span class="valine-comment-count" data-xid="/2020/07/28/R-CNN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是计算机视觉cv"><span class="toc-number">1.</span> <span class="toc-text"> 什么是计算机视觉cv</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#应用范围"><span class="toc-number">2.</span> <span class="toc-text"> 应用范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#近几年论文"><span class="toc-number">3.</span> <span class="toc-text"> 近几年论文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算机视觉目前要解决哪些问题"><span class="toc-number">4.</span> <span class="toc-text"> 计算机视觉目前要解决哪些问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本篇论文相较于以往提出哪些新的方法"><span class="toc-number">5.</span> <span class="toc-text"> 本篇论文相较于以往提出哪些新的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#r-cnn的流程"><span class="toc-number">6.</span> <span class="toc-text"> R-CNN的流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#思考"><span class="toc-number">7.</span> <span class="toc-text"> 思考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#疑问"><span class="toc-number">8.</span> <span class="toc-text"> 疑问</span></a></li></ol></div></div><div class="post-content"><p>大纲：</p>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><ol>
+<li>什么是计算机视觉cv</li>
+<li>应用范围</li>
+<li>计算机视觉要解决哪些问题</li>
+<li>近几年论文</li>
+<li>本篇论文相较于以往提出哪些新的方法</li>
+<li>R-CNN的流程</li>
+<li>思考</li>
+<li>疑问</li>
+</ol>
+<h3 id="什么是计算机视觉cv"><a class="markdownIt-Anchor" href="#什么是计算机视觉cv"></a> 什么是计算机视觉cv</h3>
+<p>三个不同的教科书给出的定义：</p>
+<ul>
+<li>
+<p>“the construction of explicit, meaningful descriptions of physical objects from images” (Ballard &amp; Brown, 1982)</p>
+</li>
+<li>
+<p>“computing properties of the 3D world from one or more digital images” (Trucco &amp; Verri, 1998)</p>
+</li>
+<li>
+<p>“to make useful decisions about real physical objects and scenes based on sensed images” (Sockman &amp; Shapiro, 2001)</p>
+</li>
+</ul>
+<h3 id="应用范围"><a class="markdownIt-Anchor" href="#应用范围"></a> 应用范围</h3>
+<ul>
+<li>人脸识别</li>
+<li>图像检索</li>
+<li>游戏和控制</li>
+<li>监控</li>
+<li>生物统计（指纹，虹膜，人脸匹配）</li>
+<li>智能驾驶</li>
+</ul>
+<h3 id="近几年论文"><a class="markdownIt-Anchor" href="#近几年论文"></a> 近几年论文</h3>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20200725143404.png" alt="" /><br />
+<img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20200728201516.png" alt="" /></p>
+<h3 id="计算机视觉目前要解决哪些问题"><a class="markdownIt-Anchor" href="#计算机视觉目前要解决哪些问题"></a> 计算机视觉目前要解决哪些问题</h3>
+<ul>
+<li>图像分类image classification</li>
+<li>目标检测 object detection</li>
+<li>语义分割 Semantic Segmentation</li>
+<li>实例分割 Instance Segmentation</li>
+<li>目标追踪 object tracking</li>
+<li>姿态估计 Attitude estimation</li>
+<li>等等<br />
+<img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20200728194822.png" alt="" /></li>
+</ul>
+<h3 id="本篇论文相较于以往提出哪些新的方法"><a class="markdownIt-Anchor" href="#本篇论文相较于以往提出哪些新的方法"></a> 本篇论文相较于以往提出哪些新的方法</h3>
+<ul>
+<li>使用了CNN网络来提取特征，区别于传统从经验驱动的人造特征范式HOG、SIFT到数据驱动的表示学习范式，提高特征对样本的表示能力</li>
+<li>采用大样本下有监督预训练+小样本微调的方式解决小样本难以训练甚至过拟合等问题。</li>
+</ul>
+<h3 id="r-cnn的流程"><a class="markdownIt-Anchor" href="#r-cnn的流程"></a> R-CNN的流程</h3>
+<ul>
+<li>输入一张多目标图像，采用selective search算法提取约2000个建议框。</li>
+<li>先在每个建议框周围加上16个像素值为建议框像素平均值的边框，再直接变形为227×227的大小。</li>
+<li>依次将每个227×227的建议框输入AlexNet CNN网络获取4096维的特征。</li>
+<li>将2000×4096维特征与20个SVM组成的权值矩阵4096×20相乘，获得2000×20维矩阵表示每个建议框是某个物体类别的得分。</li>
+<li>分别对上述2000×20维矩阵中每一列即每一类进行非极大值抑制剔除重叠建议框，得到该列即该类中得分最高的一些建议框。</li>
+<li>分别用20个回归器对上述20个类别中剩余的建议框进行回归操作，最终得到每个类别的修正后的得分最高的bounding box。</li>
+</ul>
+<h3 id="思考"><a class="markdownIt-Anchor" href="#思考"></a> 思考</h3>
+<ol>
+<li>信号分类的一个角度：时域、空域、频域</li>
+<li>卷积：现实生活中，给定一个短时刺激，产生的影响往往持续一段时间。</li>
+<li>卷积神经网络 不应该是卷积，应该是互相关  参考：《数字图像处理》</li>
+<li>先用小的滤波器，再用大的滤波器，由小到大</li>
+<li>时间域上卷积：系统（或者是滤波器）输入一个脉冲信号（刺激）后，系统将输出一个具有长时间输出的相应，而非短时（瞬时）输出。<br />
+空间域上卷积： 系统（数字滤波器或者核）输入一个脉冲信号（刺激）后，系统会在在某个空间域内做出相应，而非某一空间点上相应。</li>
+<li>小卷积核识别出小视野的模型或者叫形状，把卷积后的图片叠加，形成更大的宏观图，然后在更大的图片上识别更宏观的形式，猜测：一个物体的真实标签即和微观的feature相关也和经过多次卷积运算后的feature也相关。</li>
+<li>对于图像而言，离散卷积的计算过程是模板翻转，然后在原图像上滑动模板，把对应位置上的元素相乘后加起来，得到最终的结果。如果不考虑翻转，这个滑动-相乘-叠加的过程就是相关操作。事实上我也一直用相关来理解卷积。在时域内可以从两个角度来理解这样做的含义。一种是滤波，比如最简单的高斯模板，就是把模板内像素乘以不同的权值然后加起来作为模板的中心像素值，如果模板取值全为1，就是滑动平均；如果模板取值为高斯，就是加权滑动平均，权重是中间高，四周低，在频率上理解就是低通滤波器；如果模板取值为一些边缘检测的模板，结果就是模板左边的像素减右边的像素，或者右边的减左边的，得到的就是图像梯度，方向不同代表不同方向的边缘；另一种理解是投影，因为当前模板内部图像和模板的相乘累加操作就是图像局部patch和模板的内积操作，如果把patch和模板拉直，拉直的向量看成是向量空间中的向量，那么这个过程就是patch向模板方向上的投影，一幅图像和一个模板卷积，得到的结果就是图像各个patch在这个方向上的response map或者feature map；如果这样的模板有一组，我们可以把这一组看成一组基，得到的一组feature map就是原图像在这组基上的投影。常见的如用一组Garbor滤波器提取图像的特征，以及卷积神经网络中的第一层，图像在各个卷积核上的投影。 来自知乎https://www.zhihu.com/search?type=content&amp;q=%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF%E6%A0%B8 took的回答</li>
+<li><a href="https://qiyueliuhuo.github.io/2020/06/13/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B9%8B%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/">https://qiyueliuhuo.github.io/2020/06/13/神经网络之反向传播算法/</a></li>
+</ol>
+<h3 id="疑问"><a class="markdownIt-Anchor" href="#疑问"></a> 疑问</h3>
+<ol>
+<li>现在计算机视觉方向cv是否需要花费大量时间去学习传统cv方向的知识和算法。</li>
+</ol>
+</div><div class="post-copyright"><script type="text/javascript" src="/js/copyright.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copyright.css"><p><span>本文标题：</span>R-CNN论文阅读笔记</p><p><span>文章作者：</span>七月流火</p><p><span>发布时间：</span>2020-07-28</p><p><span>最后更新：</span>2020-08-03</p><p><span>原始链接：</span><a href="/2020/07/28/R-CNN论文阅读笔记/">https://qiyueliuhuo.github.io/2020/07/28/R-CNN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/</a><span class="copy-path"><i class="fa fa-clipboard" data-clipboard-text="https://qiyueliuhuo.github.io/2020/07/28/R-CNN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/"></i></span></p><p><span>版权声明：</span>转载请注明出处。</p></div><br><div class="tags"></div><div class="post-nav"><a class="next" href="/2020/07/25/pytorch%E5%AE%9E%E7%8E%B0CNN%E7%BB%8F%E5%85%B8%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/">pytorch实现CNN经典网络框架</a></div><div id="vcomment"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script><script>var notify = 'false' ? true : false;
+var verify = 'false' ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'Bqq9R5gWyWpajSOgwN05dN2W-MdYXbMMI',
+  appKey:'4cmz7U3V4sJdUbLTG757skov',
+  placeholder:'相信你不会灌水~',
+  avatar:'mm',
+  guest_info:guest_info,
+  pageSize:'10'
+})</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://qiyueliuhuo.github.io"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" style="font-size: 15px;">科学上网</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15px;">面试</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 15px;">人生</a> <a href="/tags/%E7%A4%BE%E4%BA%A4/" style="font-size: 15px;">社交</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 15px;">生活</a> <a href="/tags/%E6%99%BA%E6%85%A7/" style="font-size: 15px;">智慧</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/tags/%E8%B0%B7%E6%AD%8C/" style="font-size: 15px;">谷歌</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 15px;">云服务器</a> <a href="/tags/%E5%A4%96%E7%BD%91/" style="font-size: 15px;">外网</a> <a href="/tags/%E5%85%8D%E8%B4%B9/" style="font-size: 15px;">免费</a> <a href="/tags/javaWeb/" style="font-size: 15px;">javaWeb</a> <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 15px;">后端</a> <a href="/tags/spring/" style="font-size: 15px;">spring</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/07/28/R-CNN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">R-CNN论文阅读笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/25/pytorch%E5%AE%9E%E7%8E%B0CNN%E7%BB%8F%E5%85%B8%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/">pytorch实现CNN经典网络框架</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/24/SSH%E8%BF%9E%E6%8E%A5%E3%80%81%E8%BF%9C%E7%A8%8B%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/">SSH连接、远程上传下载文件</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/20/%E7%A2%8E%E7%A2%8E%E5%BF%B5/">碎碎念</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/06/13/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B9%8B%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/">神经网络之反向传播算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/31/%E6%88%91%E4%BD%BF%E7%94%A8%E7%9A%84-macOS-%E5%BA%94%E7%94%A8/">我使用的 macOS 应用</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/09/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8BSQL/">数据库之SQL</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91-%E8%B0%B7%E6%AD%8C%E5%85%8D%E8%B4%B9%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8Google-Cloud-%E6%90%AD%E5%BB%BAv2ray%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/">科学上网:谷歌免费云服务器Google Cloud 搭建v2ray服务器详细教程</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/04/04/hexo%E7%BC%96%E8%BE%91%E5%AE%9E%E6%97%B6%E6%B8%B8%E8%A7%88%E5%99%A8%E6%98%BE%E7%A4%BA%E6%8F%92%E4%BB%B6browsersync/">hexo编辑实时游览器显示插件browsersync</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05/19/%E3%80%8A%E4%BA%BA%E6%80%A7%E7%9A%84%E5%BC%B1%E7%82%B9%E3%80%8B%E7%AC%94%E8%AE%B0/">《人性的弱点》笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://www.haomwei.com/" title="屠城" target="_blank">屠城</a><ul></ul><a href="http://www.mindhacks.cn/" title="刘未鹏 | Mind Hacks" target="_blank">刘未鹏 | Mind Hacks</a><ul></ul><a href="https://www.liaoxuefeng.com/" title="廖雪峰" target="_blank">廖雪峰</a><ul></ul><a href="https://www.tbfeng.com/" title="天边风" target="_blank">天边风</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2020 <a href="/." rel="nofollow">七月流火.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/love.js"></script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div><!-- hexo-inject:begin --><!-- hexo-inject:end --></body></html>
