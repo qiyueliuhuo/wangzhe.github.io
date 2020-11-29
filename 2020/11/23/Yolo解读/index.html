@@ -12,11 +12,11 @@
 <p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20200728194822.png" alt="" /></p>
 <p>YOLO的全称是you only look once，指<strong>只需要</strong>浏览一次就可以识别出图中的物体的类别和位置。</p>
 <p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123161939.png" alt="" /></p>
-<p>将图片分为<img src="https://math.jianshu.com/math?formula=S%5Ctimes%20S" alt="S\times S" />个单元格(原文中S=7)，之后的输出是以单元格为单位进行的：<br />
+<p>将图片分为个单元格(原文中S=7)，之后的输出是以单元格为单位进行的：<br />
 1.如果一个object的中心落在某个单元格上，那么这个单元格负责预测这个物体。<br />
 2.每个单元格需要预测B个bbox值(bbox值包括坐标和宽高，原文中B=2)，同时为每个bbox值预测一个置信度(confidence scores)。也就是每个单元格需要预测B×(4+1)个值。<br />
 3.每个单元格需要预测C(物体种类个数，原文C=20，这个与使用的数据库有关)个条件概率值.<br />
-所以，最后网络的输出维度为<img src="https://math.jianshu.com/math?formula=S%20%5Ctimes%20S%20%5Ctimes%20(B%5Ctimes%205%20%2B%20C)" alt="S \times S \times (B\times 5 + C)" />，这里虽然每个单元格负责预测一种物体(这也是这篇文章的问题，当有小物体时可能会有问题)，但是每个单元格可以预测多个bbox值(这里可以认为有多个不同形状的bbox，为了更准确的定位出物体，如下图所示)。</p>
+所以，最后网络的输出维度为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo>∗</mo><mi>S</mi><mo>∗</mo><mo stretchy="false">(</mo><mi>B</mi><mo>∗</mo><mn>5</mn><mo>+</mo><mi>C</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">S*S*(B*5+C)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">5</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mclose">)</span></span></span></span>，这里虽然每个单元格负责预测一种物体(这也是这篇文章的问题，当有小物体时可能会有问题)，但是每个单元格可以预测多个bbox值(这里可以认为有多个不同形状的bbox，为了更准确的定位出物体，如下图所示)。</p>
 <p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123162719.png" alt="" /></p>
 <p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123163700.png" alt="" /></p>
 <p><a href="https://zhuanlan.zhihu.com/p/24916786?utm_source=qq&amp;utm_medium=social" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/24916786?utm_source=qq&amp;utm_medium=social</a></p>
@@ -123,7 +123,7 @@
 <blockquote>
 <p>自我对抗训练（SAT）是一种新的数据增强技术，它分为两个前后两个阶段。在第一阶段，神经网络改变原始图像而不是网络权值。以这种方式，神经网络对自身进行对抗性攻击，改变原始图像，以制造图像上没有所需对象的欺骗。在第二阶段，训练神经网络以正常的方式检测修改后的图像上的目标。这个方法，是图像风格化的主要方法，让网络反向更新图像来风格化图像。</p>
 </blockquote>
-<p>![image-20201128203622259](/Users/andy/Library/Application Support/typora-user-images/image-20201128203622259.png)</p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/Snipaste_2020-11-28_20-35-42.jpg" alt="Snipaste_2020-11-28_20-35-42" /></p>
 <p>使用对抗生成可以改善学习的决策边界中的薄弱环节，提高模型的鲁棒性。因此这种数据增强方式被越来越多的对象检测框架运用。</p>
 <h4 id="dropblock正则化"><a class="markdownIt-Anchor" href="#dropblock正则化"></a> DropBlock正则化</h4>
 <blockquote>
