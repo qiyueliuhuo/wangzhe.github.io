@@ -1,34 +1,290 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。"><meta name="google-site-verification" content="cuGqxeATU6JHVkMtW496dv4O6fcd6ZPUqHLPI1PVmCM"><title>Yolo解读 | 七月流火</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.1/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.1/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.1/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script><!-- hexo-inject:begin --><!-- hexo-inject:end -->var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = 'https://hm.baidu.com/hm.js?' + '45a8b0e33cead32cd5945b033baa7255';
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-  })();
-</script><script type="text/javascript" src="//lib.baomitu.com/clipboard.js/2.0.4/clipboard.min.js"></script><script type="text/javascript" src="//lib.baomitu.com/toastr.js/2.1.4/toastr.min.js"></script><link rel="stylesheet" href="//lib.baomitu.com/toastr.js/2.1.4/toastr.min.css"><meta name="generator" content="Hexo 5.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Yolo解读</h1><a id="logo" href="/.">七月流火</a><p class="description">最怕你一生碌碌无为，还安慰自己平凡可贵。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/history/"><i class="fa fa-book"> 历史</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Yolo解读</h1><div class="post-meta">2020-11-23</div><a class="disqus-comment-count" href="/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/#vcomment"><span class="valine-comment-count" data-xid="/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#yolo"><span class="toc-number">1.</span> <span class="toc-text"> Yolo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#yolov4"><span class="toc-number">2.</span> <span class="toc-text"> YOLOv4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%BB%93%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text"> 目标检测结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cnn%E4%B8%AD%E9%80%9A%E5%B8%B8%E6%96%B9%E6%B3%95%E6%8A%80%E5%B7%A7"><span class="toc-number">2.2.</span> <span class="toc-text"> CNN中通常方法(技巧)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#activations"><span class="toc-number">2.3.</span> <span class="toc-text"> Activations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bounding-box-regression-loss"><span class="toc-number">2.4.</span> <span class="toc-text"> Bounding box regression loss</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#data-augmentation"><span class="toc-number">2.5.</span> <span class="toc-text"> Data Augmentation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text"> </span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#yolov4%E7%9B%AE%E6%A0%87"><span class="toc-number">3.1.</span> <span class="toc-text"> YOLOv4目标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#yolov4%E6%A1%86%E6%9E%B6"><span class="toc-number">3.2.</span> <span class="toc-text"> YOLOv4框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#yolov4%E6%8A%80%E5%B7%A7"><span class="toc-number">3.3.</span> <span class="toc-text"> YOLOv4技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bag-of-freebies"><span class="toc-number">3.4.</span> <span class="toc-text"> Bag-of-Freebies</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#mosaic-data-augmentation"><span class="toc-number">3.4.1.</span> <span class="toc-text"> Mosaic Data Augmentation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E5%AF%B9%E6%8A%97%E8%AE%AD%E7%BB%83sat"><span class="toc-number">3.4.2.</span> <span class="toc-text"> 自对抗训练(SAT)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dropblock%E6%AD%A3%E5%88%99%E5%8C%96"><span class="toc-number">3.4.3.</span> <span class="toc-text"> DropBlock正则化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#class-label-smoothing%E7%B1%BB%E6%A0%87%E7%AD%BE%E5%B9%B3%E6%BB%91"><span class="toc-number">3.4.4.</span> <span class="toc-text"> Class label smoothing(类标签平滑)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bag-of-specials"><span class="toc-number">3.5.</span> <span class="toc-text"> Bag-of-Specials</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#activations-2"><span class="toc-number">3.5.1.</span> <span class="toc-text"> Activations</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#mish%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="toc-number">3.5.1.1.</span> <span class="toc-text"> Mish激活函数</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cross-stage-partial-connectionscsp"><span class="toc-number">3.5.2.</span> <span class="toc-text"> Cross stage partial connections(CSP)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#dense-block"><span class="toc-number">3.5.2.1.</span> <span class="toc-text"> Dense Block</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="post-content"><h2 id="yolo"><a class="markdownIt-Anchor" href="#yolo"></a> Yolo</h2>
-<!-- hexo-inject:begin --><!-- hexo-inject:end --><blockquote>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiyueliuhuo.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="学习Yolo系列论文笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Yolo解读">
+<meta property="og:url" content="https://qiyueliuhuo.github.io/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/index.html">
+<meta property="og:site_name" content="七月流火">
+<meta property="og:description" content="学习Yolo系列论文笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20200728194822.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123161939.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123162719.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123163700.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201124092615.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/image-20201126233012193.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126232825.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201201124029.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201201152000.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126153932.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126155406.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/Snipaste_2020-11-26_18-00-21.jpg">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126184228.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201204232542.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201210205340.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/Snipaste_2020-11-27_10-21-09.jpg">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/Snipaste_2020-11-28_20-35-42.jpg">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127114847.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175115.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175436.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175453.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175739.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201128205324.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201128205547.png">
+<meta property="article:published_time" content="2020-11-23T01:27:53.000Z">
+<meta property="article:modified_time" content="2020-12-10T12:53:59.937Z">
+<meta property="article:author" content="七月流火">
+<meta property="article:tag" content="学习 思考">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20200728194822.png">
+
+<link rel="canonical" href="https://qiyueliuhuo.github.io/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Yolo解读 | 七月流火</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45a8b0e33cead32cd5945b033baa7255";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">七月流火</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">最怕你一生碌碌无为，还安慰自己平凡可贵。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qiyueliuhuo.github.io/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="七月流火">
+      <meta itemprop="description" content="程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月流火">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Yolo解读
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-23 09:27:53" itemprop="dateCreated datePublished" datetime="2020-11-23T09:27:53+08:00">2020-11-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-10 20:53:59" itemprop="dateModified" datetime="2020-12-10T20:53:59+08:00">2020-12-10</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <div class="post-description">学习Yolo系列论文笔记。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="yolo">Yolo</h2>
+<blockquote>
 <p>目标检测是计算机视觉中比较简单的任务，用来在一张图像中找到<strong>某些特定的物体</strong>，目标检测不仅要求我们识别这些物体的<strong>种类</strong>，同时要求我们标出这些物体的<strong>位置</strong>。显然，类别是离散数据，位置是连续数据。</p>
 </blockquote>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20200728194822.png" alt="" /></p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20200728194822.png" /></p>
 <p>YOLO的全称是you only look once，指<strong>只需要</strong>浏览一次就可以识别出图中的物体的类别和位置。</p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123161939.png" alt="" /></p>
-<p>将图片分为个单元格(原文中S=7)，之后的输出是以单元格为单位进行的：<br />
-1.如果一个object的中心落在某个单元格上，那么这个单元格负责预测这个物体。<br />
-2.每个单元格需要预测B个bbox值(bbox值包括坐标和宽高，原文中B=2)，同时为每个bbox值预测一个置信度(confidence scores)。也就是每个单元格需要预测B×(4+1)个值。<br />
-3.每个单元格需要预测C(物体种类个数，原文C=20，这个与使用的数据库有关)个条件概率值.<br />
-所以，最后网络的输出维度为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo>∗</mo><mi>S</mi><mo>∗</mo><mo stretchy="false">(</mo><mi>B</mi><mo>∗</mo><mn>5</mn><mo>+</mo><mi>C</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">S*S*(B*5+C)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">5</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mclose">)</span></span></span></span>，这里虽然每个单元格负责预测一种物体(这也是这篇文章的问题，当有小物体时可能会有问题)，但是每个单元格可以预测多个bbox值(这里可以认为有多个不同形状的bbox，为了更准确的定位出物体，如下图所示)。</p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123162719.png" alt="" /></p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123163700.png" alt="" /></p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/24916786?utm_source=qq&amp;utm_medium=social">https://zhuanlan.zhihu.com/p/24916786?utm_source=qq&amp;utm_medium=social</a></p>
-<h2 id="yolov4"><a class="markdownIt-Anchor" href="#yolov4"></a> YOLOv4</h2>
-<h3 id="目标检测结构"><a class="markdownIt-Anchor" href="#目标检测结构"></a> 目标检测结构</h3>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201124092615.png" alt="" /></p>
-<p><strong>Input：{Image, Patches, Image Pyramid,…}</strong></p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123161939.png" /></p>
+<p>将图片分为个单元格(原文中S=7)，之后的输出是以单元格为单位进行的： 1.如果一个object的中心落在某个单元格上，那么这个单元格负责预测这个物体。 2.每个单元格需要预测B个bbox值(bbox值包括坐标和宽高，原文中B=2)，同时为每个bbox值预测一个置信度(confidence scores)。也就是每个单元格需要预测B×(4+1)个值。 3.每个单元格需要预测C(物体种类个数，原文C=20，这个与使用的数据库有关)个条件概率值. 所以，最后网络的输出维度为<span class="math inline">\(S*S*(B*5+C)\)</span>，这里虽然每个单元格负责预测一种物体(这也是这篇文章的问题，当有小物体时可能会有问题)，但是每个单元格可以预测多个bbox值(这里可以认为有多个不同形状的bbox，为了更准确的定位出物体，如下图所示)。</p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123162719.png" /></p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201123163700.png" /></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/24916786?utm_source=qq&amp;utm_medium=social" class="uri">https://zhuanlan.zhihu.com/p/24916786?utm_source=qq&amp;utm_medium=social</a></p>
+<h2 id="yolov4">YOLOv4</h2>
+<h3 id="目标检测结构">目标检测结构</h3>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201124092615.png" /></p>
+<p><strong>Input：{Image, Patches, Image Pyramid,...}</strong></p>
 <p><strong>Backbone: {VGG16, VGG19, ResNet-50, ResNeXt-101, Darknet53, 轻量级：SqueezeNet, MobilenetV1,2,3, ShuffleNet1,2}</strong></p>
 <p><strong>Neck: {FPN, PAN, NAS-FPN, BiFPN, ASFF, SFAM, SPP, ASPP in deeplabV3+, RFB, SAM}</strong></p>
-<p><strong>Head:</strong><br />
-           <strong>Dense Prediction(one-stage): {RPN, YOLO, SSD, Retinanet, FCOS,…}</strong><br />
-           <strong>Sparse Prediction(two-stage): {Faster R-CNN, R-FCN,…}</strong></p>
+<p><strong>Head:</strong>            <strong>Dense Prediction(one-stage): {RPN, YOLO, SSD, Retinanet, FCOS,...}</strong>            <strong>Sparse Prediction(two-stage): {Faster R-CNN, R-FCN,...}</strong></p>
 <ul>
 <li><strong>Input</strong>: 算法的输入。</li>
 <li><strong>Backbone</strong>: 图像浅层特征（low-level）提取，如边缘，颜色，纹理等。</li>
@@ -36,59 +292,97 @@
 <li><strong>Head</strong>: 整合图像特征，输出想要的结果形式。</li>
 </ul>
 <p><strong>Object Detection = Backbone + Neck + Head</strong></p>
-<h3 id="cnn中通常方法技巧"><a class="markdownIt-Anchor" href="#cnn中通常方法技巧"></a> CNN中通常方法(技巧)</h3>
+<h3 id="cnn中通常方法技巧">CNN中通常方法(技巧)</h3>
 <ul>
-<li>
-<p><strong>Activations</strong>: ReLU, leaky-ReLU, parametric-ReLU, ReLU6, SELU, Swish, or Mish</p>
-</li>
-<li>
-<p><strong>Bounding box regression loss</strong>: MSE, IoU, GIoU, CIoU, DIoU</p>
-</li>
-<li>
-<p><strong>Data augmentation</strong>: CutOut, MixUp, CutMix</p>
-</li>
-<li>
-<p><strong>Regularization method</strong>: DropOut, DropPath, Spatial DropOut, or DropBlock</p>
-</li>
-<li>
-<p><strong>Normalization of the network activations by their mean and variance</strong>: Batch Normalization (BN), Cross-GPU Batch Normalization (CGBN or SyncBN), Filter Response Normalization (FRN), or Cross-Iteration Batch Normalization (CBN)</p>
-</li>
-<li>
-<p><strong>Skip-connections</strong>: Residual connections, Weighted residual connections, Multi-input weighted residual connections, or Cross stage partial connections (CSP)</p>
-</li>
+<li><p><strong>Activations</strong>: ReLU, leaky-ReLU, parametric-ReLU, ReLU6, SELU, Swish, or Mish</p></li>
+<li><p><strong>Bounding box regression loss</strong>: MSE, IoU, GIoU, CIoU, DIoU</p></li>
+<li><p><strong>Data augmentation</strong>: CutOut, MixUp, CutMix</p></li>
+<li><p><strong>Regularization method</strong>: DropOut, DropPath, Spatial DropOut, or DropBlock</p></li>
+<li><p><strong>Normalization of the network activations by their mean and variance</strong>: Batch Normalization (BN), Cross-GPU Batch Normalization (CGBN or SyncBN), Filter Response Normalization (FRN), or Cross-Iteration Batch Normalization (CBN)</p></li>
+<li><p><strong>Skip-connections</strong>: Residual connections, Weighted residual connections, Multi-input weighted residual connections, or Cross stage partial connections (CSP)</p></li>
 </ul>
-<h3 id="activations"><a class="markdownIt-Anchor" href="#activations"></a> Activations</h3>
-<p>激活函数: ReLu,LRelu, PReLU, SELU, ReLu6, <mark>Swish,  Mish</mark></p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/image-20201126233012193.png" alt="image-20201126233012193" /></p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126232825.png" alt="20201126232825" /></p>
-<h3 id="bounding-box-regression-loss"><a class="markdownIt-Anchor" href="#bounding-box-regression-loss"></a> Bounding box regression loss</h3>
-<p>前面介绍的目标检测，简单来说就是需要在一张图像中检测到目标物，如猫、狗等，那么它们具体在这张图像的哪里，需要通过一个矩形框将它们的边界框出来。给定一张图像，为了精确衡量目标物位置，即矩形边界框的位置，我们自然而然得想到：通过坐标系中矩形左上点和右下点来衡量矩形（目标）的位置。在图像领域常见的坐标系是以图像（或屏幕）的左上角为坐标原点，向右和向下分别为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span>和<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span></span>轴的正方向。这里的目标物矩形框就是Bounding box（BBox）。另外，常见的描述BBox的方式有两种，一种是BBox的左上点和右下点，即<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo fence="true">{</mo><msub><mi>x</mi><mtext>center</mtext></msub><mo separator="true">,</mo><msub><mi>y</mi><mtext>center</mtext></msub></mrow><annotation encoding="application/x-tex">\left\{x_{\text {center}}, y_{\text {center}}\right.</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">{</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">center</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">center</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi><mo separator="true">,</mo><mi>h</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">w, h\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">h</span><span class="mclose">}</span></span></span></span>， 另一种是BBox的中心点坐标以及高度和宽度，即<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo fence="true">{</mo><msub><mi>x</mi><mtext>center</mtext></msub><mo separator="true">,</mo><msub><mi>y</mi><mtext>center</mtext></msub><mo separator="true">,</mo><mi>w</mi><mo separator="true">,</mo><mi>h</mi><mo fence="true">}</mo></mrow><annotation encoding="application/x-tex">\left\{x_{\text {center}}, y_{\text {center}}, w, h\right\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">{</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">center</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">center</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">h</span><span class="mclose delimcenter" style="top:0em;">}</span></span></span></span></span>。当然，还有通过基于锚框（anchor-based method）的偏移量来描述BBox的位置，即。总的来说<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;}&#039;, got &#039;_&#039; at position 24: …_{\text {center_̲offset }}, y_{\…'>\left\{x_{\text {center_offset }}, y_{\text {center_offset }}, w_{\text {offset}}, h_{\text {offset}}\right\}</span>，需要四个变量衡量BBox的位置信息。</p>
+<h3 id="activations">Activations</h3>
+<p>激活函数: ReLu,LRelu, PReLU, SELU, ReLu6, ==Swish, Mish==</p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/image-20201126233012193.png" /></p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126232825.png" /></p>
+<h3 id="bounding-box-regression-loss">Bounding box regression loss</h3>
+<p>前面介绍的目标检测，简单来说就是需要在一张图像中检测到目标物，如猫、狗等，那么它们具体在这张图像的哪里，需要通过一个矩形框将它们的边界框出来。给定一张图像，为了精确衡量目标物位置，即矩形边界框的位置，我们自然而然得想到：通过坐标系中矩形左上点和右下点来衡量矩形（目标）的位置。在图像领域常见的坐标系是以图像（或屏幕）的左上角为坐标原点，向右和向下分别为<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>轴的正方向。这里的目标物矩形框就是Bounding box（BBox）。另外，常见的描述BBox的方式有两种，一种是BBox的左上点和右下点，即<span class="math inline">\(\left\{x_{\text {center}}, y_{\text {center}}\right.\)</span>, <span class="math inline">\(w, h\}\)</span>， 另一种是BBox的中心点坐标以及高度和宽度，即<span class="math inline">\(\left\{x_{\text {center}}, y_{\text {center}}, w, h\right\}\)</span>。当然，还有通过基于锚框（anchor-based method）的偏移量来描述BBox的位置，即<span class="math inline">\(\left\{x_{\text {center_offset }}, y_{\text {center_offset }}, w_{\text {offset}}, h_{\text {offset}}\right\}\)</span>。总的来说，需要四个变量衡量BBox的位置信息。</p>
 <p>不同于分类问题需要求得离散的类别信息，由于BBox位置坐标的连续性，将求解BBox位置的问题建模为一个回归问题，那么为了使得深度网络朝着预测正确的BBox的参数方向更新，在损失函数(loss function)中增加Bounding box regression loss（边界框回归损失项）。</p>
 <p>常见的Bounding box regression loss有以下几种：</p>
 <ul>
-<li><strong>MAE（L1 loss)</strong><p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mfrac><mn>1</mn><mi>m</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover><mi mathvariant="normal">∣</mi><mrow><mo fence="true">(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><msub><mover accent="true"><mi>y</mi><mo>^</mo></mover><mi>i</mi></msub><mo fence="true">)</mo></mrow><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">\frac{1}{m} \sum_{i=1}^{m}|\left(y_{i}-\hat{y}_{i}\right)|
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.929066em;vertical-align:-1.277669em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.32144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">m</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6513970000000002em;"><span style="top:-1.872331em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3000050000000005em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.277669em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">∣</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.19444em;">^</span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">∣</span></span></span></span></span></p>
-</li>
+<li><strong>MAE（L1 loss)</strong> <span class="math display">\[
+\text{L1 loss} = \frac{1}{m} \sum_{i=1}^{m}|\left(y_{i}-\hat{y}_{i}\right)|
+\]</span></li>
 <li><strong>MSE（L2 loss）</strong></li>
 </ul>
-<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mfrac><mn>1</mn><mi>m</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover><msup><mrow><mo fence="true">(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><msub><mover accent="true"><mi>y</mi><mo>^</mo></mover><mi>i</mi></msub><mo fence="true">)</mo></mrow><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\frac{1}{m} \sum_{i=1}^{m}\left(y_{i}-\hat{y}_{i}\right)^{2}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.929066em;vertical-align:-1.277669em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.32144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">m</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6513970000000002em;"><span style="top:-1.872331em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3000050000000005em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.277669em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.19444em;">^</span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.954008em;"><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p><span class="math display">\[
+\text{L2 loss} =\frac{1}{m} \sum_{i=1}^{m}\left(y_{i}-\hat{y}_{i}\right)^{2}
+\]</span></p>
 <ul>
-<li></li>
+<li><strong>Smooth L1 loss</strong></li>
 </ul>
-<h3 id="data-augmentation"><a class="markdownIt-Anchor" href="#data-augmentation"></a> Data Augmentation</h3>
-<p>参考：<a target="_blank" rel="noopener" href="https://www.pianshen.com/article/69351399936/">https://www.pianshen.com/article/69351399936/</a></p>
+<p><span class="math display">\[
+\operatorname{smooth}_{L_{1}}(x)=\left\{\begin{array}{ll}
+0.5 x^{2} &amp; \text { if }|x|&lt;1 \\
+|x|-0.5 &amp; \text { otherwise }
+\end{array}\right.
+\]</span></p>
+<ul>
+<li><strong>IoU loss</strong></li>
+</ul>
+<p><span class="math display">\[
+\text{IoU}=\frac{|A \cap B|}{|A \cup B|}
+\]</span></p>
+<p><span class="math display">\[
+\text { IoU loss }=-\ln \frac{\text {Intersection}(A, B)}{\text {Union }(A, B)}
+\]</span></p>
+<ul>
+<li><strong>GIoU loss</strong>
+<ul>
+<li><strong>Ｃ</strong>为包住它们的最小方框</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+\text{GIoU}=\text{IoU}-\frac{|C \backslash(A \cup B)|}{|C|}
+\]</span></p>
+<p><span class="math display">\[
+\text{GIoU loss} = 1-GIoU
+\]</span></p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201201124029.png" style="zoom:50%;" /></p>
+<ul>
+<li><strong>DIoU loss</strong>
+<ul>
+<li>将目标与anchor之间的<strong>距离，重叠率以及尺度</strong>都考虑进去</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+D I o U=I o U-\frac{\rho^{2}\left(b, b^{g t}\right)}{c^{2}}
+\]</span></p>
+<p>其中， <span class="math inline">\(b\)</span>， <span class="math inline">\(b^{gt}\)</span>分别代表了预测框和真实框的中心点，且<span class="math inline">\(\rho\)</span>代表的是计算两个中心点间的欧式距离。 <span class="math inline">\(c\)</span>代表的是能够同时包含预测框和真实框的<strong>最小闭包区域</strong>的对角线距离。</p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201201152000.png" /></p>
+<ul>
+<li><strong>CIoU loss</strong></li>
+</ul>
+<p><span class="math display">\[
+\text{CIoU loss}=1-I o U+\frac{\rho^{2}\left(\mathbf{b}, \mathbf{b}^{g t}\right)}{c^{2}}+\alpha v
+\]</span></p>
+<p><span class="math display">\[
+v=\frac{4}{\pi^{2}}\left(\arctan \frac{w^{g t}}{h^{g t}}-\arctan \frac{w}{h}\right)^{2}
+\]</span></p>
+<p><span class="math display">\[
+\alpha=\frac{v}{(1-I o U)+v}
+\]</span></p>
+<h3 id="data-augmentation">Data Augmentation</h3>
+<p>参考：https://www.pianshen.com/article/69351399936/</p>
 <ul>
 <li><strong>Random Erase</strong>：对图像中随机选取一个矩形区域用特定的值(随机值或者数据均值)进行覆盖。</li>
 <li><strong>Cutout</strong>：在图像中随机裁剪矩形区域，并用0来填充。</li>
 <li><strong>Hide and Seek</strong>：将图像分割成一个由 SxS 图像补丁组成的网格，根据概率设置随机隐藏一些补丁(区域）。</li>
 </ul>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126153932.png" alt="" /></p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126153932.png" /></p>
 <ul>
-<li>
-<p><strong>Grid Mask</strong>：与Hide-and-seek类似，也是先对图像划分网格，有<strong>规律地、均匀地</strong>选取部分区域进行填充。</p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126155406.png" alt="" /></p>
-</li>
+<li><p><strong>Grid Mask</strong>：与Hide-and-seek类似，也是先对图像划分网格，有<strong>规律地、均匀地</strong>选取部分区域进行填充。</p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126155406.png" /></p></li>
 </ul>
 <p><strong>Why？</strong></p>
 <blockquote>
@@ -97,96 +391,106 @@
 <ul>
 <li><strong>MixUp</strong>：输入两张图像，对两张图像和对应标签进行线性叠加。</li>
 </ul>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/Snipaste_2020-11-26_18-00-21.jpg" alt="Snipaste_2020-11-26_18-00-21" /></p>
+<figure>
+<img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/Snipaste_2020-11-26_18-00-21.jpg" alt="Snipaste_2020-11-26_18-00-21" /><figcaption aria-hidden="true">Snipaste_2020-11-26_18-00-21</figcaption>
+</figure>
 <ul>
-<li>
-<p><strong>Cutmix</strong>：将一部分区域cut掉但不填充0像素而是随机填充训练集中的其他数据的区域像素值，分类结果按一定的比例分配</p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126184228.png" alt="20201126184228" /></p>
-</li>
-<li>
-<p>上述算法是在图像中裁剪矩形区域并填充，那么算法在<strong>feature map上</strong>裁剪并填充的叫做DropOut、DropConnect、DropBlock。</p>
-</li>
+<li><p><strong>Cutmix</strong>：将一部分区域cut掉但不填充0像素而是随机填充训练集中的其他数据的区域像素值，分类结果按一定的比例分配</p>
+<figure>
+<img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201126184228.png" alt="20201126184228" /><figcaption aria-hidden="true">20201126184228</figcaption>
+</figure></li>
+<li><p>上述算法是在图像中裁剪矩形区域并填充，那么算法在<strong>feature map上</strong>裁剪并填充的叫做DropOut、DropConnect、DropBlock。</p></li>
 </ul>
-<h2 id=""><a class="markdownIt-Anchor" href="#"></a> </h2>
-<h3 id="yolov4目标"><a class="markdownIt-Anchor" href="#yolov4目标"></a> YOLOv4目标</h3>
+<h3 id="regularization-method">Regularization method</h3>
+<ul>
+<li><strong>DropOut</strong></li>
+</ul>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201204232542.png" /></p>
+<ul>
+<li><strong>DropPath</strong></li>
+</ul>
+<h3 id="yolov4目标">YOLOv4目标</h3>
 <p><strong>在输入网络分辨率，卷积层数，参数数之间找到最佳平衡。</strong></p>
-<h3 id="yolov4框架"><a class="markdownIt-Anchor" href="#yolov4框架"></a> YOLOv4框架</h3>
+<h3 id="yolov4框架">YOLOv4框架</h3>
 <ul>
 <li><strong>Backbone：CSPDarknet53</strong></li>
 <li><strong>Neck：SPP，PAN</strong></li>
 <li><strong>Head：YOLOv3</strong></li>
 </ul>
-<h3 id="yolov4技巧"><a class="markdownIt-Anchor" href="#yolov4技巧"></a> YOLOv4技巧</h3>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201210205340.png" /></p>
+<h3 id="yolov4技巧">YOLOv4技巧</h3>
 <ul>
 <li><strong>用于backbone的BoF：CutMix和Mosaic数据增强，DropBlock正则化，Class label smoothing</strong></li>
 <li><strong>用于backbone的BoS：Mish激活函数，CSP，MiWRC</strong></li>
 <li><strong>用于检测器的BoF：CIoU-loss，CmBN，DropBlock正则化，Mosaic数据增强，Self-Adversarial 训练，消除网格敏感性，对单个ground-truth使用多个anchor，Cosine annealing scheduler，最佳超参数，Random training shapes</strong></li>
 <li><strong>用于检测器的BoS：Mish激活函数，SPP，SAM，PAN，DIoU-NMS</strong></li>
 </ul>
-<h3 id="bag-of-freebies"><a class="markdownIt-Anchor" href="#bag-of-freebies"></a> Bag-of-Freebies</h3>
+<h3 id="bag-of-freebies">Bag-of-Freebies</h3>
 <blockquote>
 <p>什么叫Bag of freebies?字面上的意思就是免费赠品。在目标检测中是指:用一些比较有用的训练技巧来训练模型，从而使得模型取得更好的准确率但是不增加模型的复杂度，也就不增加推理(inference)是的计算量(cost)。在目标检测中，提到bag of freebies，首先 会想到的 就是Data augmentation。</p>
 </blockquote>
-<h4 id="mosaic-data-augmentation"><a class="markdownIt-Anchor" href="#mosaic-data-augmentation"></a> Mosaic Data Augmentation</h4>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/Snipaste_2020-11-27_10-21-09.jpg" alt="Snipaste_2020-11-27_10-21-09" /></p>
+<h4 id="mosaic-data-augmentation">Mosaic Data Augmentation</h4>
+<figure>
+<img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/Snipaste_2020-11-27_10-21-09.jpg" alt="Snipaste_2020-11-27_10-21-09" /><figcaption aria-hidden="true">Snipaste_2020-11-27_10-21-09</figcaption>
+</figure>
 <p><strong>Why?</strong></p>
 <ul>
 <li>一次整合了4张图片，相较于只整合了两张的CutMix，这使得模型能够检测到更多的物体。</li>
 <li>同时在计算BN的时候，一次相当于计算了四张，那么就减少了对大 batch-size的依赖。</li>
 </ul>
-<h4 id="自对抗训练sat"><a class="markdownIt-Anchor" href="#自对抗训练sat"></a> 自对抗训练(SAT)</h4>
+<h4 id="自对抗训练sat">自对抗训练(SAT)</h4>
 <blockquote>
 <p>自我对抗训练（SAT）是一种新的数据增强技术，它分为两个前后两个阶段。在第一阶段，神经网络改变原始图像而不是网络权值。以这种方式，神经网络对自身进行对抗性攻击，改变原始图像，以制造图像上没有所需对象的欺骗。在第二阶段，训练神经网络以正常的方式检测修改后的图像上的目标。这个方法，是图像风格化的主要方法，让网络反向更新图像来风格化图像。</p>
 </blockquote>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/Snipaste_2020-11-28_20-35-42.jpg" alt="Snipaste_2020-11-28_20-35-42" /></p>
+<figure>
+<img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/Snipaste_2020-11-28_20-35-42.jpg" alt="Snipaste_2020-11-28_20-35-42" /><figcaption aria-hidden="true">Snipaste_2020-11-28_20-35-42</figcaption>
+</figure>
 <p>使用对抗生成可以改善学习的决策边界中的薄弱环节，提高模型的鲁棒性。因此这种数据增强方式被越来越多的对象检测框架运用。</p>
-<h4 id="dropblock正则化"><a class="markdownIt-Anchor" href="#dropblock正则化"></a> DropBlock正则化</h4>
+<h4 id="dropblock正则化">DropBlock正则化</h4>
 <blockquote>
 <p>Dropout被广泛地用作全连接层的正则化技术，但是对于卷积层，通常不太有效。Dropout在卷积层不work的原因可能是由于卷积层的特征图中相邻位置元素在空间上共享语义信息，所以尽管某个单元被dropout掉，但与其相邻的元素依然可以保有该位置的语义信息，信息仍然可以在卷积网络中流通。因此，针对卷积网络，我们需要一种结构形式的dropout来正则化，即按块来丢弃。在本文中，我们引入DropBlock，这是一种结构化的Dropout形式，它将feature map相邻区域中的单元放在一起drop掉。大量实验表明，DropBlock在卷积网络的正则化中比dropout有更好的性能。</p>
 </blockquote>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127114847.png" alt="20201127114847" /></p>
-<h4 id="class-label-smoothing类标签平滑"><a class="markdownIt-Anchor" href="#class-label-smoothing类标签平滑"></a> Class label smoothing(类标签平滑)</h4>
+<figure>
+<img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127114847.png" alt="20201127114847" /><figcaption aria-hidden="true">20201127114847</figcaption>
+</figure>
+<h4 id="class-label-smoothing类标签平滑">Class label smoothing(类标签平滑)</h4>
 <blockquote>
 <p>label smoothing也是一种正则化策略，一种在分类问题中，防止过拟合的方法，而且是分类问题中错误标注的一种解决方法。</p>
 </blockquote>
 <ul>
-<li>公式<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>q</mi><mi>i</mi></msub><mo>=</mo><mrow><mo fence="true">{</mo><mtable rowspacing="0.15999999999999992em" columnalign="left left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mn>1</mn><mo>−</mo><mi>ε</mi></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext> if </mtext><mi>i</mi><mo>=</mo><mi>y</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>ε</mi><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><mi>K</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mtext> otherwise </mtext></mstyle></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">q_{i}=\left\{\begin{array}{ll}
+<li>公式 <span class="math display">\[
+q_{i}=\left\{\begin{array}{ll}
 1-\varepsilon &amp; \text { if } i=y \\
 \varepsilon /(K-1) &amp; \text { otherwise }
 \end{array}\right.
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">{</span></span><span class="mord"><span class="mtable"><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault">ε</span></span></span><span style="top:-2.4099999999999997em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">ε</span><span class="mord">/</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9500000000000004em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord"> if </span></span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span><span style="top:-2.4099999999999997em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord"> otherwise </span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9500000000000004em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
-</li>
+\]</span></li>
 </ul>
-<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi mathvariant="normal">Loss</mi><mo>⁡</mo><mi>i</mi></msub><mo>=</mo><mrow><mo fence="true">{</mo><mtable rowspacing="0.15999999999999992em" columnalign="left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>ε</mi><msup><mo stretchy="false">)</mo><mo>∗</mo></msup><mi mathvariant="normal">Loss</mi><mo>⁡</mo><mo separator="true">,</mo><mtext>if </mtext><mo stretchy="false">(</mo><mi>i</mi><mo>=</mo><mi>y</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><msup><mi>ε</mi><mo>∗</mo></msup><mi mathvariant="normal">Loss</mi><mo>⁡</mo><mo separator="true">,</mo><mtext>if </mtext><mo stretchy="false">(</mo><mi>i</mi><mi mathvariant="normal">≠</mi><mi>y</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">\operatorname{Loss}_{i}=\left\{\begin{array}{l}
+<p><span class="math display">\[
+\operatorname{Loss}_{i}=\left\{\begin{array}{l}
 (1-\varepsilon)^{*} \operatorname{Loss}, \text {if }(i=y) \\
 \varepsilon^{*} \operatorname{Loss}, \text {if }(i \neq y)
 \end{array}\right.
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mop"><span class="mop"><span class="mord mathrm">L</span><span class="mord mathrm">o</span><span class="mord mathrm">s</span><span class="mord mathrm">s</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">{</span></span><span class="mord"><span class="mtable"><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault">ε</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∗</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop"><span class="mord mathrm">L</span><span class="mord mathrm">o</span><span class="mord mathrm">s</span><span class="mord mathrm">s</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord text"><span class="mord">if </span></span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span><span style="top:-2.4099999999999997em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault">ε</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∗</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop"><span class="mord mathrm">L</span><span class="mord mathrm">o</span><span class="mord mathrm">s</span><span class="mord mathrm">s</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord text"><span class="mord">if </span></span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel"><span class="mrel"><span class="mord"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="rlap"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="inner"><span class="mrel"></span></span><span class="fix"></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span></span><span class="mrel">=</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9500000000000004em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+\]</span></p>
 <ul>
 <li>例如二分类中</li>
 </ul>
-<p>假设我们的分类只有两个，一个是猫一个不是猫，分别用1和0表示。Label Smoothing的工作原理是对原来的[0 1]这种标注做一个改动，假设我们给定Label Smoothing的值为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>ε</mi></mrow><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">ε</span></span></span></span>为0.1：</p>
-<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo><mo>×</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mn>0.1</mn><mo stretchy="false">)</mo><mo>+</mo><mn>0.1</mn><mi mathvariant="normal">/</mi><mn>2</mn><mo>=</mo><mo stretchy="false">[</mo><mn>0.05</mn><mo separator="true">,</mo><mn>0.95</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,1] \times(1-0.1)+0.1 / 2=[0.05,0.95]
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">1</span><span class="mord">/</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">5</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">9</span><span class="mord">5</span><span class="mclose">]</span></span></span></span></span></p>
-<p>可以看到，原来的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span>编码变成了<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mn>0.05</mn><mo separator="true">,</mo><mn>0.95</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0.05,0.95]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">5</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">9</span><span class="mord">5</span><span class="mclose">]</span></span></span></span>。</p>
-<h3 id="bag-of-specials"><a class="markdownIt-Anchor" href="#bag-of-specials"></a> Bag-of-Specials</h3>
-<h4 id="activations-2"><a class="markdownIt-Anchor" href="#activations-2"></a> Activations</h4>
-<h5 id="mish激活函数"><a class="markdownIt-Anchor" href="#mish激活函数"></a> Mish激活函数</h5>
+<p>假设我们的分类只有两个，一个是猫一个不是猫，分别用1和0表示。Label Smoothing的工作原理是对原来的[0 1]这种标注做一个改动，假设我们给定Label Smoothing的值为<span class="math inline">\(\varepsilon\)</span>为0.1： <span class="math display">\[
+[0,1] \times(1-0.1)+0.1 / 2=[0.05,0.95]
+\]</span> 可以看到，原来的<span class="math inline">\([0,1]\)</span>编码变成了<span class="math inline">\([0.05,0.95]\)</span>。</p>
+<h3 id="bag-of-specials">Bag-of-Specials</h3>
+<h4 id="activations-1">Activations</h4>
+<h5 id="mish激活函数">Mish激活函数</h5>
 <ul>
-<li>
-<p>函数表达式：</p>
-<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mtable rowspacing="0.15999999999999992em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>x</mi><mo>∗</mo><mi>tanh</mi><mo>⁡</mo><mo stretchy="false">(</mo><mtext>softplus</mtext><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext> 其中: </mtext><mi>tanh</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mrow><mo fence="true">(</mo><msup><mi>e</mi><mi>x</mi></msup><mo>−</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>x</mi></mrow></msup><mo fence="true">)</mo></mrow><mi mathvariant="normal">/</mi><mrow><mo fence="true">(</mo><msup><mi>e</mi><mi>x</mi></msup><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>x</mi></mrow></msup><mo fence="true">)</mo></mrow></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext> softplus </mtext><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>log</mi><mo>⁡</mo><mrow><mo fence="true">(</mo><mn>1</mn><mo>+</mo><msup><mi>e</mi><mi>x</mi></msup><mo fence="true">)</mo></mrow></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{array}{c}
+<li><p>函数表达式： <span class="math display">\[
+\begin{array}{c}
 f(x)=x * \tanh (\text {softplus}(x)) \\
 \text { 其中: } \tanh (x)=\left(e^{x}-e^{-x}\right) /\left(e^{x}+e^{-x}\right) \\
 \text { softplus }(x)=\log \left(1+e^{x}\right)
 \end{array}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:3.6000000000000005em;vertical-align:-1.5500000000000007em;"></span><span class="mord"><span class="mtable"><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.05em;"><span style="top:-4.21em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mop">tanh</span><span class="mopen">(</span><span class="mord text"><span class="mord">softplus</span></span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mclose">)</span></span></span><span style="top:-3.0099999999999993em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord"> </span><span class="mord cjk_fallback">其中</span><span class="mord">: </span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">tanh</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.771331em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathdefault mtight">x</span></span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">/</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.771331em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathdefault mtight">x</span></span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;">)</span></span></span></span><span style="top:-1.8099999999999994em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord"> softplus </span></span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span></span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.5500000000000007em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span></span></span></span></span></span></span></p>
-</li>
-<li>
-<p>pytorch代码实现</p>
-</li>
+\]</span></p></li>
+<li><p>pytorch代码实现</p></li>
 </ul>
-<iframe   src="https://carbon.now.sh/embed?bg=rgba%28171%2C+184%2C+195%2C+1%29&t=monokai&wt=none&l=auto&ds=true&dsyoff=20px&dsblur=68px&wc=true&wa=false&pv=0px&ph=0px&ln=true&fl=1&fm=Hack&fs=14px&lh=133%25&si=false&es=2x&wm=false&code=import%2520torch%250Aimport%2520torch.nn%2520as%2520nn%250Aimport%2520torch.nn.functional%2520as%2520F%250Afrom%2520matplotlib%2520import%2520pyplot%2520as%2520plt%250A%2520%250Aclass%2520Mish%28nn.Module%29%253A%250A%2520%2520%2520%2520def%2520__init__%28self%29%253A%250A%2520%2520%2520%2520%2520%2520%2520%2520super%28%29.__init__%28%29%250A%2520%2520%2520%2520%2520%2520%2520%2520print%28%2522Mish%2520activation%2520loaded...%2522%29%250A%2520%2520%2520%2520def%2520forward%28self%252Cx%29%253A%250A%2520%2520%2520%2520%2520%2520%2520%2520x%2520%253D%2520x%2520*%2520%28torch.tanh%28F.softplus%28x%29%29%29%250A%2520%2520%2520%2520%2520%2520%2520%2520return%2520x%250A%250Amish%2520%253D%2520Mish%28%29%250Ax%2520%253D%2520torch.linspace%28-10%252C10%252C1000%29%250Ay%2520%253D%2520mish%28x%29%250A%2520%250Aplt.plot%28x%252Cy%29%250Aplt.grid%28%29%250Aplt.show%28%29"   style="width: 846px; height: 434px; border:0; transform: scale(1); overflow:hidden;"   sandbox="allow-scripts allow-same-origin"> </iframe>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mish</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        print(<span class="string">&quot;Mish activation loaded...&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self,x</span>):</span></span><br><span class="line">        x = x * (torch.tanh(F.softplus(x)))</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">mish = Mish()</span><br><span class="line">x = torch.linspace(-<span class="number">10</span>,<span class="number">10</span>,<span class="number">1000</span>)</span><br><span class="line">y = mish(x)</span><br><span class="line"> </span><br><span class="line">plt.plot(x,y)</span><br><span class="line">plt.grid()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 <p><strong>Why?</strong></p>
 <ul>
 <li>无上界：可以防止网络饱和也就是梯度消失。</li>
@@ -194,38 +498,323 @@ f(x)=x * \tanh (\text {softplus}(x)) \\
 <li>平滑：首先在0值点连续相比ReLU可以减少一些不可预料的问题，其次可以使网络更容易优化并且提高泛化性能。</li>
 <li>非单调：可以使一些小的负输入也被保留为负输出，提高网络的可解释能力和梯度流。</li>
 </ul>
-<h4 id="cross-stage-partial-connectionscsp"><a class="markdownIt-Anchor" href="#cross-stage-partial-connectionscsp"></a> Cross stage partial connections(CSP)</h4>
+<h4 id="cross-stage-partial-connectionscsp">Cross stage partial connections(CSP)</h4>
 <blockquote>
 <p>为了提升精度，主干网络经常被设计的很深，一方面增强模型的表达力，另一方面增大了感受野，然后随着网络变深，训练难度也会随之增大，所以会在网络中加入一些 skip-connection。YOLOV4的主干网络采用的是CSPDarknet53，这里来简单梳理一下这个bakebone</p>
 </blockquote>
-<h5 id="dense-block"><a class="markdownIt-Anchor" href="#dense-block"></a> Dense Block</h5>
+<h5 id="dense-block">Dense Block</h5>
 <p>自从<strong>resnet</strong>将残差概念带入到CNN之后，稠密连接已经被证实对于提升网络表达能力有效果。</p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175115.png" alt="20201127175115" /></p>
-<p>一个Dense Block可以包含多个卷积层，如上图所示的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>H</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">H_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。每一个卷积层(Hi)中包括卷积层，BN层，ReLU等。除了输入层以外，其他的所有Block的输入都来自于前面所有的Block，所以这样特征图的数量就会变大，这个概念就被称为增长率(growth rate)。</p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175115.png" /></p>
+<p>一个Dense Block可以包含多个卷积层，如上图所示的<span class="math inline">\(H_i\)</span>。每一个卷积层(Hi)中包括卷积层，BN层，ReLU等。除了输入层以外，其他的所有Block的输入都来自于前面所有的Block，所以这样特征图的数量就会变大，这个概念就被称为<strong>增长率(growth rate)</strong>。</p>
 <p>在多个Dense Block之间加上卷积和池化之后，就可以组成Dense Net：</p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175436.png" alt="20201127175436" /></p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175453.png" alt="20201127175453" /></p>
-<p>**<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1911.11929.pdf">CSPNet</a>**将DenseBlock的输入特征图分成了两个部分，如下图所示：</p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175739.png" alt="20201127175739" /></p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201128205324.png" alt="20201128205324" /></p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175436.png" /></p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175453.png" /></p>
+<p><strong><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1911.11929.pdf">CSPNet</a></strong>将DenseBlock的输入特征图分成了两个部分，如下图所示：</p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201127175739.png" /></p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201128205324.png" /></p>
 <p>YOLOv4 使用了上面的 CSP 与下面的 Darknet-53 作为特征提取的骨干。</p>
-<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201128205547.png" alt="20201128205547" /></p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201128205547.png" /></p>
 <p>相比于基于 ResNet 的设计，CSPDarknet53 模型的目标检测准确度更高，不过 ResNet 的分类性能更好一些。但是，借助后文将讨论的 Mish 和其它技术，CSPDarknet53 的分类准确度可以得到提升。因此，YOLOv4 最终选择了 CSPDarknet53。</p>
-</div><div class="post-copyright"><script type="text/javascript" src="/js/copyright.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copyright.css"><p><span>本文标题：</span>Yolo解读</p><p><span>文章作者：</span>七月流火</p><p><span>发布时间：</span>2020-11-23</p><p><span>最后更新：</span>2020-11-30</p><p><span>原始链接：</span><a href="/2020/11/23/Yolo解读/">https://qiyueliuhuo.github.io/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/</a><span class="copy-path"><i class="fa fa-clipboard" data-clipboard-text="https://qiyueliuhuo.github.io/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/"></i></span></p><p><span>版权声明：</span>转载请注明出处。</p></div><br><div class="tags"></div><div class="post-nav"><a class="next" href="/2020/10/27/%E6%8E%A8%E7%90%86%E6%96%B9%E5%BC%8F/">推理方式</a></div><div id="vcomment"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script><script>var notify = 'false' ? true : false;
-var verify = 'false' ? true : false;
-var GUEST_INFO = ['nick','mail','link'];
-var guest_info = 'nick,mail,link'.split(',').filter(function(item){
-  return GUEST_INFO.indexOf(item) > -1
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" rel="prev" title="《机器学习》课程作业之逻辑回归">
+      <i class="fa fa-chevron-left"></i> 《机器学习》课程作业之逻辑回归
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/27/%E6%84%9F%E6%80%A7%E4%B8%8E%E7%90%86%E6%80%A7/" rel="next" title="感性与理性">
+      感性与理性 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#yolo"><span class="nav-number">1.</span> <span class="nav-text">Yolo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yolov4"><span class="nav-number">2.</span> <span class="nav-text">YOLOv4</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">目标检测结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cnn%E4%B8%AD%E9%80%9A%E5%B8%B8%E6%96%B9%E6%B3%95%E6%8A%80%E5%B7%A7"><span class="nav-number">2.2.</span> <span class="nav-text">CNN中通常方法(技巧)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#activations"><span class="nav-number">2.3.</span> <span class="nav-text">Activations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bounding-box-regression-loss"><span class="nav-number">2.4.</span> <span class="nav-text">Bounding box regression loss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#data-augmentation"><span class="nav-number">2.5.</span> <span class="nav-text">Data Augmentation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#regularization-method"><span class="nav-number">2.6.</span> <span class="nav-text">Regularization method</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yolov4%E7%9B%AE%E6%A0%87"><span class="nav-number">2.7.</span> <span class="nav-text">YOLOv4目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yolov4%E6%A1%86%E6%9E%B6"><span class="nav-number">2.8.</span> <span class="nav-text">YOLOv4框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yolov4%E6%8A%80%E5%B7%A7"><span class="nav-number">2.9.</span> <span class="nav-text">YOLOv4技巧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bag-of-freebies"><span class="nav-number">2.10.</span> <span class="nav-text">Bag-of-Freebies</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mosaic-data-augmentation"><span class="nav-number">2.10.1.</span> <span class="nav-text">Mosaic Data Augmentation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%AF%B9%E6%8A%97%E8%AE%AD%E7%BB%83sat"><span class="nav-number">2.10.2.</span> <span class="nav-text">自对抗训练(SAT)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dropblock%E6%AD%A3%E5%88%99%E5%8C%96"><span class="nav-number">2.10.3.</span> <span class="nav-text">DropBlock正则化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#class-label-smoothing%E7%B1%BB%E6%A0%87%E7%AD%BE%E5%B9%B3%E6%BB%91"><span class="nav-number">2.10.4.</span> <span class="nav-text">Class label smoothing(类标签平滑)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bag-of-specials"><span class="nav-number">2.11.</span> <span class="nav-text">Bag-of-Specials</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#activations-1"><span class="nav-number">2.11.1.</span> <span class="nav-text">Activations</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#mish%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="nav-number">2.11.1.1.</span> <span class="nav-text">Mish激活函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cross-stage-partial-connectionscsp"><span class="nav-number">2.11.2.</span> <span class="nav-text">Cross stage partial connections(CSP)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#dense-block"><span class="nav-number">2.11.2.1.</span> <span class="nav-text">Dense Block</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="七月流火"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">七月流火</p>
+  <div class="site-description" itemprop="description">程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">七月流火</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Bqq9R5gWyWpajSOgwN05dN2W-MdYXbMMI',
+      appKey     : '4cmz7U3V4sJdUbLTG757skov',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
 });
-guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
-window.valine = new Valine({
-  el:'#vcomment',
-  notify:notify,
-  verify:verify,
-  appId:'Bqq9R5gWyWpajSOgwN05dN2W-MdYXbMMI',
-  appKey:'4cmz7U3V4sJdUbLTG757skov',
-  placeholder:'相信你不会灌水~',
-  avatar:'mm',
-  guest_info:guest_info,
-  pageSize:'10'
-})</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://qiyueliuhuo.github.io"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/%E5%A4%96%E7%BD%91/" style="font-size: 15px;">外网</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 15px;">人生</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 15px;">生活</a> <a href="/tags/%E6%99%BA%E6%85%A7/" style="font-size: 15px;">智慧</a> <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" style="font-size: 15px;">科学上网</a> <a href="/tags/%E8%B0%B7%E6%AD%8C/" style="font-size: 15px;">谷歌</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 15px;">云服务器</a> <a href="/tags/%E7%A4%BE%E4%BA%A4/" style="font-size: 15px;">社交</a> <a href="/tags/%E5%85%8D%E8%B4%B9/" style="font-size: 15px;">免费</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15px;">面试</a> <a href="/tags/javaWeb/" style="font-size: 15px;">javaWeb</a> <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 15px;">后端</a> <a href="/tags/spring/" style="font-size: 15px;">spring</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/">Yolo解读</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/10/27/%E6%8E%A8%E7%90%86%E6%96%B9%E5%BC%8F/">推理方式</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/08/01/%E3%80%8A%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">《亲密关系》阅读笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/28/R-CNN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">R-CNN论文阅读笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/28/%E9%82%A3%E4%BA%9B%E6%83%85%E8%AF%9D/">那些情话</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/24/SSH%E8%BF%9E%E6%8E%A5%E3%80%81%E8%BF%9C%E7%A8%8B%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/">SSH连接、远程上传下载文件</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/20/%E7%A2%8E%E7%A2%8E%E5%BF%B5/">碎碎念</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/06/13/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B9%8B%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/">神经网络之反向传播算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/31/%E6%88%91%E4%BD%BF%E7%94%A8%E7%9A%84-macOS-%E5%BA%94%E7%94%A8/">我使用的 macOS 应用</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91-%E8%B0%B7%E6%AD%8C%E5%85%8D%E8%B4%B9%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8Google-Cloud-%E6%90%AD%E5%BB%BAv2ray%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/">科学上网:谷歌免费云服务器Google Cloud 搭建v2ray服务器详细教程</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://www.haomwei.com/" title="屠城" target="_blank">屠城</a><ul></ul><a href="http://www.mindhacks.cn/" title="刘未鹏 | Mind Hacks" target="_blank">刘未鹏 | Mind Hacks</a><ul></ul><a href="https://www.liaoxuefeng.com/" title="廖雪峰" target="_blank">廖雪峰</a><ul></ul><a href="https://www.tbfeng.com/" title="天边风" target="_blank">天边风</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2020 <a href="/." rel="nofollow">七月流火.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/love.js"></script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div><!-- hexo-inject:begin --><!-- hexo-inject:end --></body></html>
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

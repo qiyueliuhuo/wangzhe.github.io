@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiyueliuhuo.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="《机器学习》课程第一周作业。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《机器学习》课程作业之逻辑回归">
+<meta property="og:url" content="https://qiyueliuhuo.github.io/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/index.html">
+<meta property="og:site_name" content="七月流火">
+<meta property="og:description" content="《机器学习》课程第一周作业。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/IMG_0013.jpg">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201115160053.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201202121057.png">
+<meta property="article:published_time" content="2020-12-02T03:55:54.000Z">
+<meta property="article:modified_time" content="2020-12-02T15:12:54.460Z">
+<meta property="article:author" content="七月流火">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/IMG_0013.jpg">
+
+<link rel="canonical" href="https://qiyueliuhuo.github.io/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《机器学习》课程作业之逻辑回归 | 七月流火</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45a8b0e33cead32cd5945b033baa7255";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">七月流火</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">最怕你一生碌碌无为，还安慰自己平凡可贵。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qiyueliuhuo.github.io/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="七月流火">
+      <meta itemprop="description" content="程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月流火">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《机器学习》课程作业之逻辑回归
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-02 11:55:54 / 修改时间：23:12:54" itemprop="dateCreated datePublished" datetime="2020-12-02T11:55:54+08:00">2020-12-02</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <div class="post-description">《机器学习》课程第一周作业。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="第一周作业">第一周作业</h2>
+<h3 id="作业题1">作业题1</h3>
+<p>试根据逻辑回归的授课内容，推导以下公式(5分):</br> 假设 <span class="math display">\[L(\theta)=\prod_{i=1}^{n} P\left(y_{i} \mid x_{i} ; \theta\right)=\prod_{i=1}^{n}\left(f_{\theta}\left(x_{i}\right)\right)^{y_{i}}\left(1-f_{\theta}\left(x_{i}\right)\right)^{1-y_{i}} \]</span> 请证明:<span class="math inline">\(\ln L(\theta)=\sum_{i=1}^{n}\left(\left(y_{i} * \theta^{T} * x_{i}\right)-\ln \left(1+e^{\theta^{T} * x_{i}}\right)\right)\)</span>成立。</p>
+<p>证明： <img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/IMG_0013.jpg" /></p>
+<h3 id="作业题2">作业题2</h3>
+<p>对于文档“ex2data2”中的数据(每一行表示一个样本，每一行有三个数值， 其中前两个值代表输入属性 x， 最后一个值代表标签 y)，请使用逻辑回归模型训 练一个分类器，并对结果进行可视化(5 分)。注 1:编程 语言不限;注 2:可视 化过程中，请使用不同颜色或形状区分“0”类和“1”类数据，并画出决策方程， 如下图 给出一个示例: <img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201115160053.png" /></p>
+<h4 id="python实现">python实现</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">实现《机器学习》课程-庞善民主讲 课程代码</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">第一周作业：</span></span><br><span class="line"><span class="string">对于文档“ex2data2”中的数据(每一行表示一个样本，每一行有三个数值， 其中前两个值代表输入属性 x，</span></span><br><span class="line"><span class="string">最后一个值代表标签 y)，请使用逻辑回归模型训 练一个分类器，并对结果进行可视化(5 分)。注 1:编程</span></span><br><span class="line"><span class="string">语言不限;注 2:可视 化过程中，请使用不同颜色或形状区分“0”类和“1”类数据，并画出决策方程， 如下图</span></span><br><span class="line"><span class="string">给出一个示例:</span></span><br><span class="line"><span class="string">![](https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201115160053.png)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"></span><br><span class="line">doc = <span class="built_in">open</span>(<span class="string">&#x27;source/_posts/机器学习/result.txt&#x27;</span>, <span class="string">&#x27;a+&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">F</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span>(<span class="params">z</span>):</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> / (<span class="number">1</span> + np.exp(-z))</span><br><span class="line">    <span class="comment"># 交叉熵误差 二分类</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">cross_entropy</span>(<span class="params">a, y_</span>):</span></span><br><span class="line">        lnL = <span class="number">0</span> </span><br><span class="line">        bs = a.size</span><br><span class="line">        <span class="keyword">for</span> idx <span class="keyword">in</span> <span class="built_in">range</span>(bs):</span><br><span class="line">            lnL += np.log(a[idx] +  <span class="number">1e-10</span>) <span class="keyword">if</span> y_[idx] == <span class="number">1</span> <span class="keyword">else</span> np.log(<span class="number">1</span> - a[idx] + <span class="number">1e-10</span>) </span><br><span class="line">        <span class="keyword">return</span> lnL/bs</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">f1</span>(<span class="params">preds, labels</span>):</span></span><br><span class="line">        TP, FN, FP, TN = <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">        m = <span class="built_in">len</span>(preds)</span><br><span class="line">        <span class="keyword">for</span> idx <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">            <span class="keyword">if</span> preds[idx] == <span class="number">1</span> <span class="keyword">and</span> labels[idx] == <span class="number">1</span>:</span><br><span class="line">                TP += <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> preds[idx] == <span class="number">0</span> <span class="keyword">and</span> labels[idx] == <span class="number">1</span>:</span><br><span class="line">                FN += <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> preds[idx] == <span class="number">1</span> <span class="keyword">and</span> labels[idx] == <span class="number">0</span>:</span><br><span class="line">                FP += <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> preds[idx] == <span class="number">0</span> <span class="keyword">and</span> labels[idx] == <span class="number">0</span>:</span><br><span class="line">                TN += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span> * TP / (m + TP - TN)</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">目前只支持二分类</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogisticRegressionModel</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self._train = <span class="literal">False</span></span><br><span class="line">        self.parameters = &#123;&#125;</span><br><span class="line">        self.d_parameters = &#123;&#125;</span><br><span class="line">        self.parameters[<span class="string">&#x27;theta&#x27;</span>] = <span class="literal">None</span></span><br><span class="line">        self.d_parameters[<span class="string">&#x27;theta&#x27;</span>] = <span class="literal">None</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    input data</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__call__</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        xp = x.copy()</span><br><span class="line">        y_ = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">if</span> self._train:</span><br><span class="line">            xp, y_ = xp</span><br><span class="line">        <span class="keyword">if</span> self.parameters[<span class="string">&#x27;theta&#x27;</span>] <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self.parameters[<span class="string">&#x27;theta&#x27;</span>] = np.ndarray((xp.shape[<span class="number">1</span>] + <span class="number">1</span>,))</span><br><span class="line">        theta = self.parameters[<span class="string">&#x27;theta&#x27;</span>]</span><br><span class="line">        xp = np.insert(xp, <span class="number">0</span>, <span class="number">1</span>, axis=<span class="number">1</span>) <span class="comment"># 增加x_0=1</span></span><br><span class="line">        z = xp @ theta.T </span><br><span class="line">        a = F.sigmoid(z)</span><br><span class="line">        possibility = a.copy()</span><br><span class="line">        classes = np.int64(possibility&gt;<span class="number">0.5</span>)</span><br><span class="line">        possibility[possibility&lt;=<span class="number">0.5</span>] = <span class="number">1</span> - possibility[possibility&lt;=<span class="number">0.5</span>]</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self._train:</span><br><span class="line">            <span class="keyword">return</span> classes, possibility</span><br><span class="line">        <span class="keyword">if</span> self._train:</span><br><span class="line">            <span class="comment"># 对数似然（交叉熵？）</span></span><br><span class="line">            train_score = F.cross_entropy(a, y_)</span><br><span class="line">            self.d_parameters[<span class="string">&#x27;theta&#x27;</span>] =  ((y_ - a) @ xp)/a.size</span><br><span class="line">            <span class="comment"># check gradient</span></span><br><span class="line">            check_theta = theta.copy()</span><br><span class="line">            dx = <span class="number">1e-10</span></span><br><span class="line">            check_theta[<span class="number">0</span>] += dx</span><br><span class="line">            <span class="keyword">assert</span> <span class="built_in">abs</span>((F.cross_entropy(F.sigmoid(xp @ check_theta), y_) - F.cross_entropy(F.sigmoid(xp @ theta), y_))/dx - \</span><br><span class="line">                        self.d_parameters[<span class="string">&#x27;theta&#x27;</span>][<span class="number">0</span>]) &lt; <span class="number">1e-4</span></span><br><span class="line">            <span class="keyword">return</span> classes, possibility, train_score</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">evaluate</span>(<span class="params">self, preds, labels</span>):</span></span><br><span class="line">        <span class="comment"># error   accuracy   f1</span></span><br><span class="line">        <span class="keyword">return</span> np.<span class="built_in">sum</span>(preds != labels) / <span class="built_in">len</span>(preds), np.<span class="built_in">sum</span>(preds == labels) / <span class="built_in">len</span>(preds), F.f1(preds, labels)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">predict</span>(<span class="params">self</span>):</span></span><br><span class="line">        self._train = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">train</span>(<span class="params">self</span>):</span></span><br><span class="line">        self._train = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Batch Gradient Descent</span></span><br><span class="line"><span class="string">采用整个训练集的数据</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BGD</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, lr</span>):</span></span><br><span class="line">        self.lr = lr</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">update</span>(<span class="params">self, parameters, d_parameters</span>):</span></span><br><span class="line">        <span class="keyword">for</span> key <span class="keyword">in</span> parameters.keys():</span><br><span class="line">            parameters[key] += self.lr * d_parameters[key]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Datasets</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, dataPath=<span class="string">&#x27;source/_posts/机器学习/ex2data2.txt&#x27;</span>, batchsize=<span class="number">16</span></span>):</span></span><br><span class="line">        <span class="comment"># datasets  train_set, train_labels, test_set, test_labels</span></span><br><span class="line">        self.datasets = np.ndarray((<span class="number">4</span>,), dtype=np.ndarray)</span><br><span class="line">        self.batchsize = batchsize</span><br><span class="line">        self.count = -<span class="number">1</span></span><br><span class="line">        self.num = <span class="number">0</span></span><br><span class="line">        data_all, labels_all = <span class="literal">None</span>, <span class="literal">None</span></span><br><span class="line">        <span class="keyword">with</span> Path(dataPath).<span class="built_in">open</span>() <span class="keyword">as</span> f:</span><br><span class="line">            line = f.readline()</span><br><span class="line">            <span class="keyword">while</span> line:</span><br><span class="line">                self.num += <span class="number">1</span></span><br><span class="line">                line = line[:-<span class="number">1</span>]</span><br><span class="line">                line_datas = line.split(<span class="string">&#x27;,&#x27;</span>)</span><br><span class="line">                data_all = np.array([[line_datas[<span class="number">0</span>], line_datas[<span class="number">1</span>]]], dtype=np.float32) <span class="keyword">if</span> data_all <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">else</span> np.append(data_all, np.array([[line_datas[<span class="number">0</span>], line_datas[<span class="number">1</span>]]], dtype=np.float32),axis=<span class="number">0</span>)</span><br><span class="line">                labels_all = np.array([line_datas[<span class="number">2</span>]], dtype=np.float32) <span class="keyword">if</span> labels_all <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">else</span> np.append(labels_all, np.float32(line_datas[<span class="number">2</span>]))</span><br><span class="line">                line = f.readline()</span><br><span class="line">        index = [idx <span class="keyword">for</span> idx <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(data_all))]</span><br><span class="line">        np.random.seed(<span class="number">3</span>)</span><br><span class="line">        np.random.shuffle(index) <span class="comment"># 打乱索引</span></span><br><span class="line">        data_all = data_all[index]</span><br><span class="line">        labels_all = labels_all[index]</span><br><span class="line">        self.origin_datasets = np.ndarray((<span class="number">2</span>,), dtype=np.ndarray)</span><br><span class="line">        self.origin_datasets[<span class="number">0</span>] = data_all</span><br><span class="line">        self.origin_datasets[<span class="number">1</span>] = labels_all</span><br><span class="line"></span><br><span class="line">        split = <span class="built_in">int</span>(<span class="built_in">len</span>(data_all) * <span class="number">0.8</span>)</span><br><span class="line">        self.datasets[<span class="number">0</span>] = data_all[:split]</span><br><span class="line">        self.datasets[<span class="number">1</span>] = labels_all[:split]</span><br><span class="line">        self.datasets[<span class="number">2</span>] = data_all[split:]</span><br><span class="line">        self.datasets[<span class="number">3</span>] = labels_all[split:]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__next__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.count += <span class="number">1</span></span><br><span class="line">        train_set = self.datasets[<span class="number">0</span>]</span><br><span class="line">        trian_labels = self.datasets[<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">if</span> self.batchsize &lt;= <span class="number">0</span>:</span><br><span class="line">            <span class="comment"># 约定batchsize &lt;= 0 则返回所有训练数据集</span></span><br><span class="line">            <span class="keyword">if</span> self.count &gt; <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">raise</span> StopIteration</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">return</span> train_set, trian_labels</span><br><span class="line">        <span class="keyword">if</span> self.count &gt;= math.ceil(<span class="built_in">len</span>(self.datasets[<span class="number">0</span>])/self.batchsize):</span><br><span class="line">            <span class="keyword">raise</span> StopIteration</span><br><span class="line">        <span class="keyword">return</span> train_set[self.count*self.batchsize:(self.count+<span class="number">1</span>)*self.batchsize], \</span><br><span class="line">               trian_labels[self.count*self.batchsize:(self.count+<span class="number">1</span>)*self.batchsize]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__call__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.origin_datasets, self.datasets[<span class="number">0</span>], self.datasets[<span class="number">1</span>], self.datasets[<span class="number">2</span>], self.datasets[<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 该函数会由iter函数调用 返回一个可以迭代的对象</span></span><br><span class="line">        self.count = -<span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> self</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_test_set</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.datasets[<span class="number">2</span>], self.datasets[<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run1</span>():</span></span><br><span class="line">    <span class="comment"># 根据数据可视化图知，需将二维数据映射到高维空间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># x1_cubic = datasets[0][:,0]**2</span></span><br><span class="line">    <span class="comment"># x2_cubic = datasets[0][:,1]**2</span></span><br><span class="line">    <span class="comment"># datasets[0] = np.column_stack((datasets[0], x1_square, x2_square, x1_cubic, x2_cubic))</span></span><br><span class="line">    model = LogisticRegressionModel()</span><br><span class="line">    optimizer = BGD(lr=<span class="number">1</span>)</span><br><span class="line">    epochs = <span class="number">10000</span></span><br><span class="line">    model.train()</span><br><span class="line">    datasets = Datasets(batchsize=<span class="number">0</span>)</span><br><span class="line">    test_set, test_labels = datasets.get_test_set()</span><br><span class="line">    test_set = np.column_stack((test_set, test_set[:,<span class="number">0</span>]**<span class="number">2</span>, test_set[:,<span class="number">1</span>]**<span class="number">2</span>, test_set[:,<span class="number">0</span>] * test_set[:,<span class="number">1</span>])) <span class="comment">#  test_set[:,0]**3, test_set[:,1]**3))</span></span><br><span class="line">    best_f1 = <span class="number">0</span></span><br><span class="line">    best_result = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epochs):</span><br><span class="line">        print(<span class="string">&#x27;%d/%d epoch: &#x27;</span> % (epoch + <span class="number">1</span>, epochs))</span><br><span class="line">        <span class="keyword">for</span> train_set, train_labels <span class="keyword">in</span> datasets:</span><br><span class="line">            train_set = np.column_stack((train_set, train_set[:,<span class="number">0</span>]**<span class="number">2</span>, \</span><br><span class="line">                        train_set[:,<span class="number">1</span>]**<span class="number">2</span>, train_set[:,<span class="number">0</span>] * train_set[:,<span class="number">1</span>])) <span class="comment">#, train_set[:,0]**3, train_set[:,1]**3))</span></span><br><span class="line">            train_data = np.ndarray((<span class="number">2</span>,), dtype=np.ndarray)</span><br><span class="line">            train_data[<span class="number">0</span>] = train_set</span><br><span class="line">            train_data[<span class="number">1</span>] = train_labels</span><br><span class="line">            classes, possibility, train_score = model(train_data)</span><br><span class="line">            optimizer.update(model.parameters, model.d_parameters)</span><br><span class="line">            print(<span class="string">&#x27;train_score: %f&#x27;</span> % train_score)</span><br><span class="line">        test_classes_pred, _, _, = model([test_set, test_labels])</span><br><span class="line">        err, acc, f1 = model.evaluate(test_classes_pred, test_labels)</span><br><span class="line">        <span class="keyword">if</span> f1 &gt; best_f1:</span><br><span class="line">            best_result[<span class="string">&#x27;err&#x27;</span>] = err.copy()</span><br><span class="line">            best_result[<span class="string">&#x27;acc&#x27;</span>] = acc.copy()</span><br><span class="line">            best_result[<span class="string">&#x27;f1&#x27;</span>] = f1</span><br><span class="line">            best_f1 = f1</span><br><span class="line">            best_result[<span class="string">&#x27;parameters&#x27;</span>] = <span class="built_in">str</span>(model.parameters.copy())</span><br><span class="line">        print(<span class="string">&#x27;error: %f, accuracy: %f, f1: %f&#x27;</span> % (err, acc, f1))</span><br><span class="line"></span><br><span class="line">    print(<span class="string">&#x27;best --  error: %f, accuracy: %f, f1: %f&#x27;</span> % (best_result[<span class="string">&#x27;err&#x27;</span>], best_result[<span class="string">&#x27;acc&#x27;</span>], best_result[<span class="string">&#x27;f1&#x27;</span>]), file=doc)</span><br><span class="line">    print(best_result[<span class="string">&#x27;parameters&#x27;</span>], file=doc)</span><br><span class="line">    print(<span class="string">&#x27;best --  error: %f, accuracy: %f, f1: %f&#x27;</span> % (best_result[<span class="string">&#x27;err&#x27;</span>], best_result[<span class="string">&#x27;acc&#x27;</span>], best_result[<span class="string">&#x27;f1&#x27;</span>]))</span><br><span class="line">    print(best_result[<span class="string">&#x27;parameters&#x27;</span>])</span><br><span class="line">    plt.title(<span class="string">u&#x27;figure&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    plt.xlabel(<span class="string">&#x27;x_1&#x27;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;x_2&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    origin_datasets, train_set, train_labels, test_set, test_labels  = datasets()</span><br><span class="line">    plt.scatter(train_set[train_labels==<span class="number">1</span>][:,<span class="number">0</span>], train_set[train_labels==<span class="number">1</span>][:,<span class="number">1</span>], s=<span class="number">20</span>, marker=<span class="string">&#x27;+&#x27;</span>)</span><br><span class="line">    plt.scatter(train_set[train_labels!=<span class="number">1</span>][:,<span class="number">0</span>], train_set[train_labels!=<span class="number">1</span>][:,<span class="number">1</span>], s=<span class="number">20</span>, marker=<span class="string">&#x27;o&#x27;</span>)</span><br><span class="line">    plt.scatter(test_set[:,<span class="number">0</span>], test_set[:,<span class="number">1</span>], s=<span class="number">50</span>, marker=<span class="string">&#x27;p&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 方程  0 = theta_0 + theta_1 * x1 + theta_2 * x2 + theta_3 * x1^2 + theta_4 * x2^2 + theta_5 * x1 * x2</span></span><br><span class="line">    </span><br><span class="line">    x1 = np.arange(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">0.00001</span>)</span><br><span class="line">    theta = model.parameters[<span class="string">&#x27;theta&#x27;</span>]</span><br><span class="line">    a = theta[<span class="number">4</span>]</span><br><span class="line">    b = theta[<span class="number">2</span>] + theta[<span class="number">5</span>] * x1</span><br><span class="line">    c = theta[<span class="number">0</span>] + theta[<span class="number">1</span>] * x1 + theta[<span class="number">3</span>] * (x1**<span class="number">2</span>)</span><br><span class="line">    retain = b**<span class="number">2</span>-<span class="number">4</span>*a*c &gt;= <span class="number">0</span></span><br><span class="line">    x1 = x1[retain]</span><br><span class="line">    b = theta[<span class="number">2</span>] + theta[<span class="number">5</span>] * x1</span><br><span class="line">    c = theta[<span class="number">0</span>] + theta[<span class="number">1</span>] * x1 + theta[<span class="number">3</span>] * (x1**<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    x2_down = ((-b+np.sqrt(b**<span class="number">2</span>-<span class="number">4</span>*a*c))/(<span class="number">2</span>*a))</span><br><span class="line">    x2_up = ((-b-np.sqrt(b**<span class="number">2</span>-<span class="number">4</span>*a*c))/(<span class="number">2</span>*a))</span><br><span class="line">    plt.plot(x1, x2_up, linewidth = <span class="string">&#x27;1&#x27;</span>, color=<span class="string">&#x27;red&#x27;</span>)</span><br><span class="line">    plt.plot(x1, x2_down, linewidth = <span class="string">&#x27;1&#x27;</span>, color=<span class="string">&#x27;red&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(&#x27;theta: &#x27; + str(model.parameters[&#x27;theta&#x27;]))</span></span><br><span class="line">    plt.legend(labels=[<span class="string">&#x27;border&#x27;</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 测试1.0  1.0 数据</span></span><br><span class="line">    <span class="comment"># test0 = np.array([[1.0, 1.0, 1.0, 1.0, 1.0]], dtype=np.float32)</span></span><br><span class="line">    <span class="comment"># model.predict()</span></span><br><span class="line">    <span class="comment"># classes, possibility = model(test0)</span></span><br><span class="line">    <span class="comment"># print(classes)</span></span><br><span class="line">    <span class="comment"># print(possibility)</span></span><br><span class="line">    </span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<h4 id="运行结果">运行结果：</h4>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">best --  error: <span class="number">0.166667</span>, accuracy: <span class="number">0.833333</span>, f1: <span class="number">0.857143</span></span><br><span class="line">&#123;&#x27;theta&#x27;: array([  <span class="number">4.90069183</span>,   <span class="number">3.14739206</span>,   <span class="number">3.76928051</span>, -<span class="number">12.15848288</span>,</span><br><span class="line">       -<span class="number">10.98386797</span>,  -<span class="number">6.24150969</span>])&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201202121057.png" /></p>
+<h2 id="总结">总结</h2>
+<p>写程序，然后调试太费时间了了了了了，尤其是不去调现成的包，手动实现每个细节。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="prev" title="《机器学习》课程作业之神经网络反向传播">
+      <i class="fa fa-chevron-left"></i> 《机器学习》课程作业之神经网络反向传播
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/" rel="next" title="Yolo解读">
+      Yolo解读 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E5%91%A8%E4%BD%9C%E4%B8%9A"><span class="nav-number">1.</span> <span class="nav-text">第一周作业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A%E9%A2%981"><span class="nav-number">1.1.</span> <span class="nav-text">作业题1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A%E9%A2%982"><span class="nav-number">1.2.</span> <span class="nav-text">作业题2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#python%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">python实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">1.2.2.</span> <span class="nav-text">运行结果：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="七月流火"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">七月流火</p>
+  <div class="site-description" itemprop="description">程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">七月流火</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Bqq9R5gWyWpajSOgwN05dN2W-MdYXbMMI',
+      appKey     : '4cmz7U3V4sJdUbLTG757skov',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

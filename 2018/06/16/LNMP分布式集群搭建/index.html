@@ -1,263 +1,654 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。"><meta name="google-site-verification" content="cuGqxeATU6JHVkMtW496dv4O6fcd6ZPUqHLPI1PVmCM"><title>LNMP分布式集群搭建 | 七月流火</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.1/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.1/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.1/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script><!-- hexo-inject:begin --><!-- hexo-inject:end -->var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = 'https://hm.baidu.com/hm.js?' + '45a8b0e33cead32cd5945b033baa7255';
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-  })();
-</script><script type="text/javascript" src="//lib.baomitu.com/clipboard.js/2.0.4/clipboard.min.js"></script><script type="text/javascript" src="//lib.baomitu.com/toastr.js/2.1.4/toastr.min.js"></script><link rel="stylesheet" href="//lib.baomitu.com/toastr.js/2.1.4/toastr.min.css"><meta name="generator" content="Hexo 5.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">LNMP分布式集群搭建</h1><a id="logo" href="/.">七月流火</a><p class="description">最怕你一生碌碌无为，还安慰自己平凡可贵。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/history/"><i class="fa fa-book"> 历史</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">LNMP分布式集群搭建</h1><div class="post-meta">2018-06-16</div><a class="disqus-comment-count" href="/2018/06/16/LNMP%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/#vcomment"><span class="valine-comment-count" data-xid="/2018/06/16/LNMP%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/"></span><span> 条评论</span></a><div class="post-content"><p><img src="https://note.youdao.com/yws/api/personal/file/WEB1c22ac7bb353014a01f3f91485cfaaa0?method=download&amp;shareKey=0f4ff9f8bdb82aaf871dc682b3fe8110" alt="image" /><br />
-       <!-- hexo-inject:begin --><!-- hexo-inject:end -->一共需要9台服务器，程序部分由一台负载均衡和两台Nginx+PHP服务器组成，数据库部分由两台MySql服务器组成，文件存储部分由两台Nginx（其中一台是Nginx+PHP）和一台NFS服务器组成。还有一台Memcached服务器作为数据缓存，用于处理读写频繁的热门数据。</p>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiyueliuhuo.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一共需要9台服务器，程序部分由一台负载均衡和两台Nginx+PHP服务器组成，数据库部分由两台MySql服务器组成，文件存储部分由两台Nginx（其中一台是Nginx+PHP）和一台NFS服务器组成。还有一台Memcached服务器作为数据缓存，用于处理读写频繁的热门数据。    编号 服务器 硬件侧重点     1 Nginx（www.itshop.test） 网卡性能   2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LNMP分布式集群搭建">
+<meta property="og:url" content="https://qiyueliuhuo.github.io/2018/06/16/LNMP%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="七月流火">
+<meta property="og:description" content="一共需要9台服务器，程序部分由一台负载均衡和两台Nginx+PHP服务器组成，数据库部分由两台MySql服务器组成，文件存储部分由两台Nginx（其中一台是Nginx+PHP）和一台NFS服务器组成。还有一台Memcached服务器作为数据缓存，用于处理读写频繁的热门数据。    编号 服务器 硬件侧重点     1 Nginx（www.itshop.test） 网卡性能   2">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB1c22ac7bb353014a01f3f91485cfaaa0?method=download&amp;shareKey=0f4ff9f8bdb82aaf871dc682b3fe8110">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBd98e0ba8a718e76ce6e2f00d5d8eef70?method=download&amp;shareKey=60524d2f00b213d64115f8b882c1877d">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB5c5cb87d060b173a95b4d4ff6b28ad66?method=download&amp;shareKey=77b7e46502ecf5851deafeec193416b0">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBcacc65278849272bd250c13788d520c3?method=download&amp;shareKey=a262787ec230fc14cb2257fc34e18f88">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBc1fa6f184b9413cee095af0ba3c73911?method=download&amp;shareKey=6a33442152b2f0d02333cba283fc9612">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBb66f7180d6ba8085b9832efe20000900?method=download&amp;shareKey=0eb6d6d844c9ab099aaf94c748765dcd">
+<meta property="article:published_time" content="2018-06-16T13:49:09.000Z">
+<meta property="article:modified_time" content="2020-05-07T07:38:21.197Z">
+<meta property="article:author" content="七月流火">
+<meta property="article:tag" content="学习 思考">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB1c22ac7bb353014a01f3f91485cfaaa0?method=download&amp;shareKey=0f4ff9f8bdb82aaf871dc682b3fe8110">
+
+<link rel="canonical" href="https://qiyueliuhuo.github.io/2018/06/16/LNMP%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>LNMP分布式集群搭建 | 七月流火</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45a8b0e33cead32cd5945b033baa7255";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">七月流火</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">最怕你一生碌碌无为，还安慰自己平凡可贵。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qiyueliuhuo.github.io/2018/06/16/LNMP%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="七月流火">
+      <meta itemprop="description" content="程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月流火">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LNMP分布式集群搭建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-06-16 21:49:09" itemprop="dateCreated datePublished" datetime="2018-06-16T21:49:09+08:00">2018-06-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-07 15:38:21" itemprop="dateModified" datetime="2020-05-07T15:38:21+08:00">2020-05-07</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2018/06/16/LNMP%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2018/06/16/LNMP%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://note.youdao.com/yws/api/personal/file/WEB1c22ac7bb353014a01f3f91485cfaaa0?method=download&amp;shareKey=0f4ff9f8bdb82aaf871dc682b3fe8110" alt="image" />        一共需要9台服务器，程序部分由一台负载均衡和两台Nginx+PHP服务器组成，数据库部分由两台MySql服务器组成，文件存储部分由两台Nginx（其中一台是Nginx+PHP）和一台NFS服务器组成。还有一台Memcached服务器作为数据缓存，用于处理读写频繁的热门数据。</p>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>编号</th>
 <th>服务器</th>
 <th>硬件侧重点</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>1</td>
 <td>Nginx（www.itshop.test）</td>
 <td>网卡性能</td>
 </tr>
-<tr>
+<tr class="even">
 <td>2</td>
 <td>Nginx（file.itshop.test)</td>
 <td>内存容量、磁盘性能</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>3</td>
 <td>Nginx + PHP（upload.itshop.test）</td>
 <td>网卡性能</td>
 </tr>
-<tr>
+<tr class="even">
 <td>4</td>
 <td>Nginx + PHP</td>
 <td>CPU性能</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>5</td>
 <td>Nginx + PHP</td>
 <td>CPU性能</td>
 </tr>
-<tr>
+<tr class="even">
 <td>6</td>
 <td>NFS</td>
 <td>磁盘容量</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>7</td>
 <td>MySQL（主）</td>
 <td>CPU、内存、磁盘整体性能</td>
 </tr>
-<tr>
+<tr class="even">
 <td>8</td>
 <td>MySQL（从）</td>
 <td>CPU、内存、磁盘整体性能</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>9</td>
 <td>Memcached</td>
 <td>内存容量</td>
 </tr>
 </tbody>
 </table>
-<ol>
+<ol type="1">
 <li>部署Linux服务器</li>
 </ol>
 <ul>
 <li>选择CentOS 7 系统最小化部署在vmware fusion虚拟机上。（root 19960621）（andy 19960621）</li>
 <li>使用命令：ip addr查看网络信息。</li>
-<li>使用命令：vi /etc/sysconfig/network-scripts/ifcfg-ens33修改网卡配置，修改或增加以下几项。</li>
-</ul>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ONBOOT</span>=<span class="string">&quot;yes&quot;</span>                 <span class="attribute">BOOTPROTO</span>=<span class="string">&quot;static&quot;</span>              <span class="attribute">IPADDR</span>=<span class="string">&quot;172.16.212.11&quot;</span></span><br><span class="line"><span class="attribute">NETMASK</span>=<span class="string">&quot;255.255.255.0&quot;</span>      <span class="attribute">GATEWAY</span>=<span class="string">&quot;172.16.212.1&quot;</span>          <span class="attribute">DNS1</span>=<span class="string">&quot;172.16.212.1&quot;</span></span><br></pre></td></tr></table></figure>
-<ul>
+<li>使用命令：vi /etc/sysconfig/network-scripts/ifcfg-ens33修改网卡配置，修改或增加以下几项。 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ONBOOT</span>=<span class="string">&quot;yes&quot;</span>                 <span class="attribute">BOOTPROTO</span>=<span class="string">&quot;static&quot;</span>              <span class="attribute">IPADDR</span>=<span class="string">&quot;172.16.212.11&quot;</span></span><br><span class="line"><span class="attribute">NETMASK</span>=<span class="string">&quot;255.255.255.0&quot;</span>      <span class="attribute">GATEWAY</span>=<span class="string">&quot;172.16.212.1&quot;</span>          <span class="attribute">DNS1</span>=<span class="string">&quot;172.16.212.1&quot;</span></span><br></pre></td></tr></table></figure></li>
 <li>确保在CentOS中可以ping通主机中的虚拟接口vmnet8地址。</li>
-<li>编写脚本来改变各个克隆系统的地址。</li>
-</ul>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">文件名：netconfig.sh</span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line">ens33=<span class="regexp">/etc/</span>sysconfig<span class="regexp">/network-scripts/i</span>fcfg-ens33</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;$1&quot;</span> = <span class="string">&quot;&quot;</span> ]; then <span class="keyword">exit</span> <span class="number">3</span>; fi</span><br><span class="line">sed -i <span class="string">&#x27;s/IPADDR=.*/IPADDR=172.16.212.1&#x27;</span><span class="variable">$1</span><span class="string">&#x27;/&#x27;</span> <span class="variable">$ens33</span></span><br><span class="line">sed -i <span class="string">&#x27;s/UUID=.*/UUID=&#x27;</span>`uuidgen`<span class="string">&#x27;/g&#x27;</span> <span class="variable">$ens33</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>根据下图先从1号系统克隆出6、7和9号系统CentOS系统。<br />
-<img src="https://note.youdao.com/yws/api/personal/file/WEBd98e0ba8a718e76ce6e2f00d5d8eef70?method=download&amp;shareKey=60524d2f00b213d64115f8b882c1877d" alt="image" /></li>
+<li>编写脚本来改变各个克隆系统的地址。 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">文件名：netconfig.sh</span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line">ens33=<span class="regexp">/etc/</span>sysconfig<span class="regexp">/network-scripts/i</span>fcfg-ens33</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;$1&quot;</span> = <span class="string">&quot;&quot;</span> ]; then <span class="keyword">exit</span> <span class="number">3</span>; fi</span><br><span class="line">sed -i <span class="string">&#x27;s/IPADDR=.*/IPADDR=172.16.212.1&#x27;</span><span class="variable">$1</span><span class="string">&#x27;/&#x27;</span> <span class="variable">$ens33</span></span><br><span class="line">sed -i <span class="string">&#x27;s/UUID=.*/UUID=&#x27;</span>`uuidgen`<span class="string">&#x27;/g&#x27;</span> <span class="variable">$ens33</span></span><br></pre></td></tr></table></figure></li>
+<li>根据下图先从1号系统克隆出6、7和9号系统CentOS系统。 <img src="https://note.youdao.com/yws/api/personal/file/WEBd98e0ba8a718e76ce6e2f00d5d8eef70?method=download&amp;shareKey=60524d2f00b213d64115f8b882c1877d" alt="image" /></li>
 <li>克隆后，运行脚本./netconfig.sh 6 改变系统ip地址。</li>
 <li>启动sshd服务，方便主机通过ssh连接系统，命令：service sshd start。</li>
 </ul>
-<ol start="2">
+<ol start="2" type="1">
 <li>安装Nginx</li>
 </ol>
 <ul>
 <li>更新下yum源。</li>
-<li>安装依赖包<br />
-<code>yum -y install gcc pcre-devel openssl-devel</code></li>
-<li>下载安装包。<br />
-<code>wget http://nginx.org/download/nginx-1.14.0.tar.gz</code></li>
-<li>解压文件。<br />
-<code>tar zxvf nginx-1.14.0</code></li>
-<li>编译安装，并增加http_realip_module模块。<br />
-<code>./configure --with-http_ssl_module --with-http_realip_module &amp;&amp; make &amp;&amp; make install</code></li>
-<li>创建软链接到/usr/local/sbin目录中，该目录在PATH变量中，所以直接创建软链接之后，就可以直接使用nginx命令。<br />
-<code>ls -s /usr/local/nginx/sbin/nginx /usr/local/sbin/nginx</code></li>
-<li>在CentOS中，service命令实际上是调用了/etc/init.d目录下的shell脚本。所以编写nginx的shell脚本，将脚本放在/etc/init.d/目录下。</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#! /bin/bash</span></span><br><span class="line">DAEMON=/usr/<span class="built_in">local</span>/nginx/sbin/nginx</span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$1</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line">    start)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Starting nginx daemon...&quot;</span></span><br><span class="line">        <span class="variable">$DAEMON</span> &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;SUCCESS&quot;</span></span><br><span class="line">    ;;</span><br><span class="line">    stop)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Stopping nginx daemon...&quot;</span></span><br><span class="line">        <span class="variable">$DAEMON</span> -s quit &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;SUCCESS&quot;</span></span><br><span class="line">    ;;</span><br><span class="line">    reload)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Reloading nginx daemon...&quot;</span></span><br><span class="line">        <span class="variable">$DAEMON</span> -s reload &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;SUCCESS&quot;</span></span><br><span class="line">    ;;</span><br><span class="line">    restart)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Restarting nginx daemon...&quot;</span></span><br><span class="line">        <span class="variable">$DAEMON</span> -s quit</span><br><span class="line">        <span class="variable">$DAEMON</span> &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;SUCCESS&quot;</span></span><br><span class="line">    ;;</span><br><span class="line">    *)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Usage: service nginx (start|stop|restart|reload)&quot;</span></span><br><span class="line">        <span class="built_in">exit</span> 2</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置开机启动：chkconfig --add nginx</li>
-</ul>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">报错：<span class="keyword">error</span> reading information <span class="keyword">on</span> service nginx: Invalid argument</span><br><span class="line">目前不知道如何解决。</span><br></pre></td></tr></table></figure>
-<ul>
-<li>配置并启动Nginx。</li>
-</ul>
-<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># useradd -s /sbin/nologin -M www</span></span><br><span class="line"><span class="meta"># mkdir -p /data/www</span></span><br><span class="line"><span class="meta"># cp ../html/* /data/www</span></span><br><span class="line"><span class="meta"># chown -R www:www /data/www</span></span><br><span class="line"><span class="meta"># vi ../conf/nginx.conf</span></span><br><span class="line">改动部分如下：</span><br><span class="line"><span class="meta"># configure user</span></span><br><span class="line">user  www www;</span><br><span class="line">worker_processes  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta"># modify server block:</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">server</span> &#123;</span><br><span class="line">        listen       <span class="number">80</span>;</span><br><span class="line">        server_name  localhost;</span><br><span class="line">	root /data/www;</span><br><span class="line">	<span class="keyword">index</span> <span class="keyword">index</span>.html <span class="keyword">index</span>.htm;</span><br><span class="line"></span><br><span class="line">        <span class="meta">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line">        <span class="meta">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line">        <span class="meta">#location / &#123;</span></span><br><span class="line">        <span class="meta">#    root   html;</span></span><br><span class="line">        <span class="meta">#    index  index.html index.htm;</span></span><br><span class="line">        <span class="meta">#&#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="meta">#error_page  404              /404.html;</span></span><br><span class="line"></span><br><span class="line">        <span class="meta"># redirect server error pages to the static page /50x.html</span></span><br><span class="line">        <span class="meta">#</span></span><br><span class="line">        <span class="meta">#error_page   500 502 503 504  /50x.html;</span></span><br><span class="line">        <span class="meta">#location = /50x.html &#123;</span></span><br><span class="line">        <span class="meta">#    root   html;</span></span><br><span class="line">        <span class="meta">#&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="meta"># firewall-cmd --zone=public --add-port=80/tcp --permanent # 开放80端口。</span></span><br></pre></td></tr></table></figure>
-<ul>
+<li>安装依赖包 <code>yum -y install gcc pcre-devel openssl-devel</code></li>
+<li>下载安装包。 <code>wget http://nginx.org/download/nginx-1.14.0.tar.gz</code></li>
+<li>解压文件。 <code>tar  zxvf nginx-1.14.0</code></li>
+<li>编译安装，并增加http_realip_module模块。 <code>./configure --with-http_ssl_module --with-http_realip_module &amp;&amp; make &amp;&amp; make install</code></li>
+<li>创建软链接到/usr/local/sbin目录中，该目录在PATH变量中，所以直接创建软链接之后，就可以直接使用nginx命令。 <code>ls -s /usr/local/nginx/sbin/nginx /usr/local/sbin/nginx</code></li>
+<li>在CentOS中，service命令实际上是调用了/etc/init.d目录下的shell脚本。所以编写nginx的shell脚本，将脚本放在/etc/init.d/目录下。 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#! /bin/bash</span></span><br><span class="line">DAEMON=/usr/<span class="built_in">local</span>/nginx/sbin/nginx</span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$1</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line">    start)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Starting nginx daemon...&quot;</span></span><br><span class="line">        <span class="variable">$DAEMON</span> &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;SUCCESS&quot;</span></span><br><span class="line">    ;;</span><br><span class="line">    stop)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Stopping nginx daemon...&quot;</span></span><br><span class="line">        <span class="variable">$DAEMON</span> -s quit &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;SUCCESS&quot;</span></span><br><span class="line">    ;;</span><br><span class="line">    reload)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Reloading nginx daemon...&quot;</span></span><br><span class="line">        <span class="variable">$DAEMON</span> -s reload &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;SUCCESS&quot;</span></span><br><span class="line">    ;;</span><br><span class="line">    restart)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Restarting nginx daemon...&quot;</span></span><br><span class="line">        <span class="variable">$DAEMON</span> -s quit</span><br><span class="line">        <span class="variable">$DAEMON</span> &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;SUCCESS&quot;</span></span><br><span class="line">    ;;</span><br><span class="line">    *)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Usage: service nginx (start|stop|restart|reload)&quot;</span></span><br><span class="line">        <span class="built_in">exit</span> 2</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li>设置开机启动：chkconfig --add nginx <figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">报错：<span class="keyword">error</span> reading information <span class="keyword">on</span> service nginx: Invalid argument</span><br><span class="line">目前不知道如何解决。</span><br></pre></td></tr></table></figure></li>
+<li>配置并启动Nginx。 <figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># useradd -s /sbin/nologin -M www</span></span><br><span class="line"><span class="meta"># mkdir -p /data/www</span></span><br><span class="line"><span class="meta"># cp ../html/* /data/www</span></span><br><span class="line"><span class="meta"># chown -R www:www /data/www</span></span><br><span class="line"><span class="meta"># vi ../conf/nginx.conf</span></span><br><span class="line">改动部分如下：</span><br><span class="line"><span class="meta"># configure user</span></span><br><span class="line">user  www www;</span><br><span class="line">worker_processes  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta"># modify server block:</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">server</span> &#123;</span><br><span class="line">        listen       <span class="number">80</span>;</span><br><span class="line">        server_name  localhost;</span><br><span class="line">	root /data/www;</span><br><span class="line">	<span class="keyword">index</span> <span class="keyword">index</span>.html <span class="keyword">index</span>.htm;</span><br><span class="line"></span><br><span class="line">        <span class="meta">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line">        <span class="meta">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line">        <span class="meta">#location / &#123;</span></span><br><span class="line">        <span class="meta">#    root   html;</span></span><br><span class="line">        <span class="meta">#    index  index.html index.htm;</span></span><br><span class="line">        <span class="meta">#&#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="meta">#error_page  404              /404.html;</span></span><br><span class="line"></span><br><span class="line">        <span class="meta"># redirect server error pages to the static page /50x.html</span></span><br><span class="line">        <span class="meta">#</span></span><br><span class="line">        <span class="meta">#error_page   500 502 503 504  /50x.html;</span></span><br><span class="line">        <span class="meta">#location = /50x.html &#123;</span></span><br><span class="line">        <span class="meta">#    root   html;</span></span><br><span class="line">        <span class="meta">#&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="meta"># firewall-cmd --zone=public --add-port=80/tcp --permanent # 开放80端口。</span></span><br></pre></td></tr></table></figure></li>
 <li>查看nginx是否启动：ps -aux |grep nginx</li>
 <li>查看nginx监听端口：netstat -an | grep 80</li>
 <li>CentOS中，无netstat和ifconfig命令，需安装：yum install net-tools。</li>
-<li>在游览器中访问地址，成功打开nginx欢迎页面。<br />
-<img src="https://note.youdao.com/yws/api/personal/file/WEB5c5cb87d060b173a95b4d4ff6b28ad66?method=download&amp;shareKey=77b7e46502ecf5851deafeec193416b0" alt="image" /></li>
+<li>在游览器中访问地址，成功打开nginx欢迎页面。 <img src="https://note.youdao.com/yws/api/personal/file/WEB5c5cb87d060b173a95b4d4ff6b28ad66?method=download&amp;shareKey=77b7e46502ecf5851deafeec193416b0" alt="image" /></li>
 <li>克隆虚拟机，基于1号服务器克隆出两台虚拟机，作为2、3号服务器使用。使用前面的netconfig.sh脚本进行网络配置。</li>
-<li>配置物理机的hosts文件，完成配置后，在游览器中分别访问这几个域名。</li>
+<li>配置物理机的hosts文件，完成配置后，在游览器中分别访问这几个域名。 <figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">172.16.212.11</span> itshop.test</span><br><span class="line"><span class="number">172.16.212.11</span> www.itshop.test</span><br><span class="line"><span class="number">172.16.212.12</span> file.itshop.test</span><br><span class="line"><span class="number">172.16.212.13</span> upload.itshop.test</span><br></pre></td></tr></table></figure></li>
 </ul>
-<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">172.16.212.11</span> itshop.test</span><br><span class="line"><span class="number">172.16.212.11</span> www.itshop.test</span><br><span class="line"><span class="number">172.16.212.12</span> file.itshop.test</span><br><span class="line"><span class="number">172.16.212.13</span> upload.itshop.test</span><br></pre></td></tr></table></figure>
-<ol start="3">
+<ol start="3" type="1">
 <li>Nginx + PHP服务器搭建</li>
 </ol>
 <ul>
 <li>在3号服务器上安装PHP。安装完后php -v显示php版本信息。</li>
-<li>部署Nginx + PHP环境</li>
-</ul>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">cp php.ini-production /usr/local/php/<span class="class"><span class="keyword">lib</span>/<span class="title">php</span>.<span class="title">ini</span>  <span class="comment"># 复制php.ini配置你文件</span></span></span><br><span class="line">vi /usr/local/php/<span class="class"><span class="keyword">lib</span>/<span class="title">php</span>.<span class="title">ini</span>  <span class="comment"># 配置时区为PRC?</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建服务脚本、设置开机启动</span></span><br><span class="line">cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm</span><br><span class="line">chmod +x /etc/init.d/php-fpm</span><br><span class="line">chkconfig --add php-fpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制php-fpm配置文件、启动服务</span></span><br><span class="line">cd /usr/local/php/etc</span><br><span class="line">cp php-fpm.conf.default php-fpm.conf</span><br><span class="line">cd php-fpm.d</span><br><span class="line">cp www.conf.default www.conf</span><br><span class="line">vi www.conf</span><br><span class="line">更改如下:</span><br><span class="line">[www]</span><br><span class="line">user=www</span><br><span class="line">group=www</span><br><span class="line">listen=<span class="regexp">/tmp/php</span>-cgi.sock</span><br><span class="line">listen.owner=www</span><br><span class="line">listen.group=www</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动php-fpm</span></span><br><span class="line">service php-fpm start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在Nginx配置文件中加入PHP支持，server模块。</span></span><br><span class="line">location ~ \.php$ &#123;</span><br><span class="line">        try_files $uri =<span class="number">404</span>;</span><br><span class="line">        fastcgi_pass   <span class="symbol">unix:</span>/tmp/php-cgi.sock;</span><br><span class="line">        <span class="keyword">include</span>        fastcgi.conf</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试，在/data/www下创建index.php内容如下：</span></span><br><span class="line">&lt;?php</span><br><span class="line">phpinfo();</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在游览器中地址输入ip:/index.php</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://note.youdao.com/yws/api/personal/file/WEBcacc65278849272bd250c13788d520c3?method=download&amp;shareKey=a262787ec230fc14cb2257fc34e18f88" alt="image" /></p>
-<ul>
+<li>部署Nginx + PHP环境 <figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">cp php.ini-production /usr/local/php/<span class="class"><span class="keyword">lib</span>/<span class="title">php</span>.<span class="title">ini</span>  <span class="comment"># 复制php.ini配置你文件</span></span></span><br><span class="line">vi /usr/local/php/<span class="class"><span class="keyword">lib</span>/<span class="title">php</span>.<span class="title">ini</span>  <span class="comment"># 配置时区为PRC?</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建服务脚本、设置开机启动</span></span><br><span class="line">cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm</span><br><span class="line">chmod +x /etc/init.d/php-fpm</span><br><span class="line">chkconfig --add php-fpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制php-fpm配置文件、启动服务</span></span><br><span class="line">cd /usr/local/php/etc</span><br><span class="line">cp php-fpm.conf.default php-fpm.conf</span><br><span class="line">cd php-fpm.d</span><br><span class="line">cp www.conf.default www.conf</span><br><span class="line">vi www.conf</span><br><span class="line">更改如下:</span><br><span class="line">[www]</span><br><span class="line">user=www</span><br><span class="line">group=www</span><br><span class="line">listen=<span class="regexp">/tmp/php</span>-cgi.sock</span><br><span class="line">listen.owner=www</span><br><span class="line">listen.group=www</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动php-fpm</span></span><br><span class="line">service php-fpm start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在Nginx配置文件中加入PHP支持，server模块。</span></span><br><span class="line">location ~ \.php$ &#123;</span><br><span class="line">        try_files $uri =<span class="number">404</span>;</span><br><span class="line">        fastcgi_pass   <span class="symbol">unix:</span>/tmp/php-cgi.sock;</span><br><span class="line">        <span class="keyword">include</span>        fastcgi.conf</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试，在/data/www下创建index.php内容如下：</span></span><br><span class="line">&lt;?php</span><br><span class="line">phpinfo();</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在游览器中地址输入ip:/index.php</span></span><br></pre></td></tr></table></figure> <img src="https://note.youdao.com/yws/api/personal/file/WEBcacc65278849272bd250c13788d520c3?method=download&amp;shareKey=a262787ec230fc14cb2257fc34e18f88" alt="image" /></li>
 <li>克隆虚拟机，基于3号服务器克隆出4号和5号虚拟机，并用脚本配置网络。</li>
-<li>配合防火墙，4、5号服务器不需要被外部访问，只允许1号负载均衡服务器的IP地址进行访问。</li>
-</ul>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="regexp">//</span> TODO  未完成</span><br></pre></td></tr></table></figure>
-<ul>
-<li>配置反向代理和负载均衡<br />
-<img src="https://note.youdao.com/yws/api/personal/file/WEBc1fa6f184b9413cee095af0ba3c73911?method=download&amp;shareKey=6a33442152b2f0d02333cba283fc9612" alt="image" /></li>
-<li>还需在后端服务器nginx中配置如下</li>
-</ul>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">real_ip_header</span> X-Real-IP;</span><br><span class="line"><span class="attribute">set_real_ip_from</span> </span><br></pre></td></tr></table></figure>
-<ul>
+<li>配合防火墙，4、5号服务器不需要被外部访问，只允许1号负载均衡服务器的IP地址进行访问。 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="regexp">//</span> TODO  未完成</span><br></pre></td></tr></table></figure></li>
+<li>配置反向代理和负载均衡 <img src="https://note.youdao.com/yws/api/personal/file/WEBc1fa6f184b9413cee095af0ba3c73911?method=download&amp;shareKey=6a33442152b2f0d02333cba283fc9612" alt="image" /></li>
+<li>还需在后端服务器nginx中配置如下 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">real_ip_header</span> X-Real-IP;</span><br><span class="line"><span class="attribute">set_real_ip_from</span> </span><br></pre></td></tr></table></figure></li>
 <li>访问172.16.212.11/index.php查看其中的server_addr为后端服务器ip交替出现。</li>
 </ul>
-<ol start="4">
+<ol start="4" type="1">
 <li>搭建NFS文件服务器。</li>
 </ol>
 <ul>
 <li>为了使2、3号服务器能够同时访问6号服务器中的文件，就需要利用NFS实现文件共享。</li>
-<li>在6号服务器中，执行命令：yum -y install nfs-utils，之后配置NFS端口号。</li>
+<li>在6号服务器中，执行命令：yum -y install nfs-utils，之后配置NFS端口号。 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vi /etc/sysconfig/nfs</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#找到如下一行，取消注释</span></span><br><span class="line"><span class="attr">MOUNTD_PORT</span>=<span class="number">892</span></span><br></pre></td></tr></table></figure></li>
+<li>开启服务 <figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 开启rpcbind服务</span></span><br><span class="line"><span class="comment"># service rpcbind start</span></span><br><span class="line"><span class="comment"># 开启nfs服务</span></span><br><span class="line"><span class="comment"># service nfs start</span></span><br><span class="line"><span class="comment"># 配置NFS服务开机自动自启</span></span><br><span class="line">chkconfig nfs <span class="keyword">on</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启与NFS相关的端口号 TODO 未成功</span></span><br><span class="line">iptables -I INPUT -p udp <span class="comment">--dport 111 -j ACCEPT</span></span><br><span class="line">iptables -I INPUT -p udp <span class="comment">--dport 892 -j ACCEPT</span></span><br><span class="line">iptables -I INPUT -p tcp <span class="comment">--dport 2049 -j ACCEPT</span></span><br><span class="line">iptables save  <span class="comment"># TODO 没用</span></span><br><span class="line">解决方法:</span><br><span class="line"><span class="keyword">http</span>://blog<span class="number">.163</span>.com/xavier_666/blog/static/<span class="number">25884000720163299503423</span>/</span><br></pre></td></tr></table></figure></li>
+<li>配置共享目录 <figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建用于共享的目录</span></span><br><span class="line">mkdir <span class="string">/share</span></span><br><span class="line">chmod 777 <span class="string">/share</span></span><br><span class="line"><span class="comment"># 配置/share为共享目录，语法是“路径 IP段(权限)”， 任意IP为*表示</span></span><br><span class="line"><span class="keyword">echo</span> &#x27;<span class="string">/share</span> *<span class="params">(rw)</span>&#x27; &gt; <span class="string">/etc/exports</span></span><br><span class="line">注： *号与<span class="params">(rw)</span>之间并没有空格</span><br><span class="line"><span class="comment"># 使配置生效</span></span><br><span class="line">service nfs <span class="keyword">reload</span></span><br></pre></td></tr></table></figure></li>
+<li>在2号服务器中挂载NFS共享目录，实现远程文件的读写操作。 <figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装NFS软件包</span></span><br><span class="line">yum -y install nfs-utils</span><br><span class="line"><span class="comment"># 查看NFS服务器中的共享目录</span></span><br><span class="line">showmout -e 172.16.212.16</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将NFS服务器中的共享/share目录挂载到本地目录&quot;/data/share&quot;（也可以是其他目录）</span></span><br><span class="line">mkdir <span class="string">/data/share</span></span><br><span class="line">mount 172.15.212.15:<span class="string">/share</span> <span class="string">/data/share</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 读写文件测试</span></span><br><span class="line"><span class="keyword">cd</span> <span class="string">/data/share</span></span><br><span class="line"><span class="keyword">echo</span> Hello  &gt;test.txt</span><br><span class="line">cat test.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使2号服务器开启自动挂载NFS目录</span></span><br><span class="line"><span class="keyword">echo</span> &#x27;172.16.212.16:<span class="string">/share</span> <span class="string">/data/share</span> nfs defaults 0 0&#x27; &gt;&gt; <span class="string">/etc/fstab</span></span><br></pre></td></tr></table></figure></li>
+<li>在2号服务器中配置文件缓存。通过部署文件缓存服务器降低后端文件存储服务器的压力。 <img src="https://note.youdao.com/yws/api/personal/file/WEBb66f7180d6ba8085b9832efe20000900?method=download&amp;shareKey=0eb6d6d844c9ab099aaf94c748765dcd" alt="image" /></li>
 </ul>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vi /etc/sysconfig/nfs</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#找到如下一行，取消注释</span></span><br><span class="line"><span class="attr">MOUNTD_PORT</span>=<span class="number">892</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>开启服务</li>
-</ul>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 开启rpcbind服务</span></span><br><span class="line"><span class="comment"># service rpcbind start</span></span><br><span class="line"><span class="comment"># 开启nfs服务</span></span><br><span class="line"><span class="comment"># service nfs start</span></span><br><span class="line"><span class="comment"># 配置NFS服务开机自动自启</span></span><br><span class="line">chkconfig nfs <span class="keyword">on</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启与NFS相关的端口号 TODO 未成功</span></span><br><span class="line">iptables -I INPUT -p udp <span class="comment">--dport 111 -j ACCEPT</span></span><br><span class="line">iptables -I INPUT -p udp <span class="comment">--dport 892 -j ACCEPT</span></span><br><span class="line">iptables -I INPUT -p tcp <span class="comment">--dport 2049 -j ACCEPT</span></span><br><span class="line">iptables save  <span class="comment"># TODO 没用</span></span><br><span class="line">解决方法:</span><br><span class="line"><span class="keyword">http</span>://blog<span class="number">.163</span>.com/xavier_666/blog/static/<span class="number">25884000720163299503423</span>/</span><br></pre></td></tr></table></figure>
-<ul>
-<li>配置共享目录</li>
-</ul>
-<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建用于共享的目录</span></span><br><span class="line">mkdir <span class="string">/share</span></span><br><span class="line">chmod 777 <span class="string">/share</span></span><br><span class="line"><span class="comment"># 配置/share为共享目录，语法是“路径 IP段(权限)”， 任意IP为*表示</span></span><br><span class="line"><span class="keyword">echo</span> &#x27;<span class="string">/share</span> *<span class="params">(rw)</span>&#x27; &gt; <span class="string">/etc/exports</span></span><br><span class="line">注： *号与<span class="params">(rw)</span>之间并没有空格</span><br><span class="line"><span class="comment"># 使配置生效</span></span><br><span class="line">service nfs <span class="keyword">reload</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>在2号服务器中挂载NFS共享目录，实现远程文件的读写操作。</li>
-</ul>
-<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装NFS软件包</span></span><br><span class="line">yum -y install nfs-utils</span><br><span class="line"><span class="comment"># 查看NFS服务器中的共享目录</span></span><br><span class="line">showmout -e 172.16.212.16</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将NFS服务器中的共享/share目录挂载到本地目录&quot;/data/share&quot;（也可以是其他目录）</span></span><br><span class="line">mkdir <span class="string">/data/share</span></span><br><span class="line">mount 172.15.212.15:<span class="string">/share</span> <span class="string">/data/share</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 读写文件测试</span></span><br><span class="line"><span class="keyword">cd</span> <span class="string">/data/share</span></span><br><span class="line"><span class="keyword">echo</span> Hello  &gt;test.txt</span><br><span class="line">cat test.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使2号服务器开启自动挂载NFS目录</span></span><br><span class="line"><span class="keyword">echo</span> &#x27;172.16.212.16:<span class="string">/share</span> <span class="string">/data/share</span> nfs defaults 0 0&#x27; &gt;&gt; <span class="string">/etc/fstab</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>在2号服务器中配置文件缓存。通过部署文件缓存服务器降低后端文件存储服务器的压力。<br />
-<img src="https://note.youdao.com/yws/api/personal/file/WEBb66f7180d6ba8085b9832efe20000900?method=download&amp;shareKey=0eb6d6d844c9ab099aaf94c748765dcd" alt="image" /></li>
-</ul>
-<ol start="5">
+<ol start="5" type="1">
 <li>配置文件上传服务器，3号服务器。</li>
 </ol>
 <ul>
 <li>挂载NFS共享目录</li>
-<li>配置Nginx对请求数据量的限制。</li>
-</ul>
-<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在server块中</span></span><br><span class="line">client_max_body_size <span class="number">20</span>m;</span><br><span class="line">另外，在php.ini中对于上传文件的限制，增加到<span class="number">10</span>M.</span><br><span class="line"><span class="comment"># vi /usr/local/php/lib/php.ini</span></span><br><span class="line"><span class="attr">post_max_size=20M</span>  <span class="comment"># 通过POST提交的最大限制</span></span><br><span class="line"><span class="attr">file_uploads=On</span>    <span class="comment"># 是否允许文件上传</span></span><br><span class="line"><span class="attr">upload_max_filesize=10M</span>    <span class="comment"># 上传文件最大限制</span></span><br><span class="line">;<span class="attr">upload_tmp_dir=</span>           <span class="comment"># 上传文件临时保存目录，默认为/tmp目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启服务</span></span><br><span class="line">service php-fpm reload</span><br><span class="line">servcie nginx reload</span><br></pre></td></tr></table></figure>
-<ul>
-<li>上传文件测试 在第三个服务器上编写如下脚本页面：</li>
-</ul>
-<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;file&quot;</span> <span class="attr">name</span>=<span class="string">&quot;up&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span></span><br><span class="line"><span class="php"><span class="meta">&lt;?php</span></span></span><br><span class="line"><span class="php"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;up&#x27;</span>])&amp;&amp;<span class="variable">$_FILES</span>[<span class="string">&#x27;up&#x27;</span>][<span class="string">&#x27;error&#x27;</span>] == <span class="number">0</span>) &#123;</span></span><br><span class="line"><span class="php">    <span class="variable">$savepath</span>=<span class="string">&#x27;uploads/&#x27;</span>.time().<span class="string">&#x27;.dat&#x27;</span>;</span></span><br><span class="line"><span class="php">    <span class="keyword">if</span>(move_uploaded_file(<span class="variable">$_FILES</span>[<span class="string">&#x27;up&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>], <span class="string">&quot;/data/share/<span class="subst">$savepath</span>&quot;</span>)) &#123;</span></span><br><span class="line"><span class="php">	<span class="keyword">echo</span> <span class="string">&quot;File:&lt;a href=\&quot;http://file.itshop.test/<span class="subst">$savepath</span>\&quot;&gt;Download&lt;/a&gt;&quot;</span>;</span></span><br><span class="line"><span class="php">    &#125;</span></span><br><span class="line"><span class="php">&#125;</span></span><br></pre></td></tr></table></figure>
-<ul>
+<li>配置Nginx对请求数据量的限制。 <figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在server块中</span></span><br><span class="line">client_max_body_size <span class="number">20</span>m;</span><br><span class="line">另外，在php.ini中对于上传文件的限制，增加到<span class="number">10</span>M.</span><br><span class="line"><span class="comment"># vi /usr/local/php/lib/php.ini</span></span><br><span class="line"><span class="attr">post_max_size=20M</span>  <span class="comment"># 通过POST提交的最大限制</span></span><br><span class="line"><span class="attr">file_uploads=On</span>    <span class="comment"># 是否允许文件上传</span></span><br><span class="line"><span class="attr">upload_max_filesize=10M</span>    <span class="comment"># 上传文件最大限制</span></span><br><span class="line">;<span class="attr">upload_tmp_dir=</span>           <span class="comment"># 上传文件临时保存目录，默认为/tmp目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启服务</span></span><br><span class="line">service php-fpm reload</span><br><span class="line">servcie nginx reload</span><br></pre></td></tr></table></figure></li>
+<li>上传文件测试 在第三个服务器上编写如下脚本页面： <figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;file&quot;</span> <span class="attr">name</span>=<span class="string">&quot;up&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span></span><br><span class="line"><span class="php"><span class="meta">&lt;?php</span></span></span><br><span class="line"><span class="php"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;up&#x27;</span>])&amp;&amp;<span class="variable">$_FILES</span>[<span class="string">&#x27;up&#x27;</span>][<span class="string">&#x27;error&#x27;</span>] == <span class="number">0</span>) &#123;</span></span><br><span class="line"><span class="php">    <span class="variable">$savepath</span>=<span class="string">&#x27;uploads/&#x27;</span>.time().<span class="string">&#x27;.dat&#x27;</span>;</span></span><br><span class="line"><span class="php">    <span class="keyword">if</span>(move_uploaded_file(<span class="variable">$_FILES</span>[<span class="string">&#x27;up&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>], <span class="string">&quot;/data/share/<span class="subst">$savepath</span>&quot;</span>)) &#123;</span></span><br><span class="line"><span class="php">	<span class="keyword">echo</span> <span class="string">&quot;File:&lt;a href=\&quot;http://file.itshop.test/<span class="subst">$savepath</span>\&quot;&gt;Download&lt;/a&gt;&quot;</span>;</span></span><br><span class="line"><span class="php">    &#125;</span></span><br><span class="line"><span class="php">&#125;</span></span><br></pre></td></tr></table></figure></li>
 <li>测试后，发现6号文件服务器中/share/upload/目录下存在上传的文件。</li>
 </ul>
-<ol start="6">
+<ol start="6" type="1">
 <li>搭建MySQL数据库服务器。</li>
 </ol>
 <ul>
 <li>安装依赖包 yum -y install gcc-c++ cmake ncurses-devel</li>
 <li>下载免安装的mysql，解压文件到/usr/local。</li>
 <li>在/etc/bashrc中设置环境变量添加指向Mysql下bin目录。</li>
-<li>配置MySQL。</li>
-</ul>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">vi <span class="regexp">/etc/my</span>.cnf</span><br><span class="line"><span class="comment">#找到如下配置进行更改</span></span><br><span class="line">datadir=<span class="regexp">/data/my</span>sql</span><br><span class="line">socket=<span class="regexp">/tmp/my</span>sql.sock</span><br><span class="line">user=mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据my.cnf中的配置，创建mysql用户</span></span><br><span class="line">useradd -s <span class="regexp">/sbin/</span>nologin -M mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行mysql_install_db程序初始化数据库，初始化后将会在数据库中保存目录中生成的数据库文件</span></span><br><span class="line">.<span class="regexp">/scripts/my</span>sql_install_db  [ 未完成 ]</span><br><span class="line"><span class="comment">#启动MySql</span></span><br><span class="line">在mysql目录的bin目录下启动mysqld</span><br><span class="line"><span class="comment">#配置防火墙允许3306端口访问。</span></span><br><span class="line">iptables -I INPUT -p tcp --dport <span class="number">3306</span> -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动mysql后修改密码</span></span><br><span class="line">./mysqladmin -uroot -pCcRH<span class="comment">#UK2Nztn password 123456</span></span><br></pre></td></tr></table></figure>
-<ul>
+<li>配置MySQL。 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">vi <span class="regexp">/etc/my</span>.cnf</span><br><span class="line"><span class="comment">#找到如下配置进行更改</span></span><br><span class="line">datadir=<span class="regexp">/data/my</span>sql</span><br><span class="line">socket=<span class="regexp">/tmp/my</span>sql.sock</span><br><span class="line">user=mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据my.cnf中的配置，创建mysql用户</span></span><br><span class="line">useradd -s <span class="regexp">/sbin/</span>nologin -M mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行mysql_install_db程序初始化数据库，初始化后将会在数据库中保存目录中生成的数据库文件</span></span><br><span class="line">.<span class="regexp">/scripts/my</span>sql_install_db  [ 未完成 ]</span><br><span class="line"><span class="comment">#启动MySql</span></span><br><span class="line">在mysql目录的bin目录下启动mysqld</span><br><span class="line"><span class="comment">#配置防火墙允许3306端口访问。</span></span><br><span class="line">iptables -I INPUT -p tcp --dport <span class="number">3306</span> -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动mysql后修改密码</span></span><br><span class="line">./mysqladmin -uroot -pCcRH<span class="comment">#UK2Nztn password 123456</span></span><br></pre></td></tr></table></figure></li>
 <li>实现MySQL主从复制</li>
 <li>基于7号服务器克隆出8号服务器，配置网络信息。</li>
-<li>主数据库服务器开启bin日志</li>
+<li>主数据库服务器开启bin日志 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vi /etc/my.conf</span></span><br><span class="line"><span class="attr">log-bin</span>=mysqlbin-log</span><br><span class="line"><span class="attr">server-id</span>=<span class="number">17</span></span><br></pre></td></tr></table></figure></li>
+<li>创建用于从数据库登录主数据库的用户 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;slave&#x27;</span>@<span class="string">&#x27;172.16.212.18&#x27;</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br></pre></td></tr></table></figure></li>
+<li>配置从服务器。 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CHANGE MASTER <span class="keyword">TO</span> <span class="attribute">master_host</span>=<span class="string">&#x27;172.16.212.17&#x27;</span>, <span class="attribute">master_user</span>=<span class="string">&#x27;slave&#x27;</span>, \</span><br><span class="line">-&gt; <span class="attribute">master_password</span>=<span class="string">&#x27;123456&#x27;</span>, <span class="attribute">master_log_file</span>=<span class="string">&#x27;mysqlbin-log.000002&#x27;</span>, <span class="attribute">master_log_pos</span>=639;</span><br><span class="line"></span><br><span class="line">mysql&gt; start slave;</span><br><span class="line"></span><br><span class="line">mysql&gt; show slave status \G</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若要停止从服务器同步，在从服务器mysql中执行</span></span><br><span class="line">slave stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检测 TODO 主从数据库  相关命令</span></span><br><span class="line">在主数据库中插入数据，从数据库中同样也插入数据。</span><br><span class="line">在从数据库中插入数据，在主数据库中并不能看到数据。</span><br><span class="line">成功。</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
 </ul>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vi /etc/my.conf</span></span><br><span class="line"><span class="attr">log-bin</span>=mysqlbin-log</span><br><span class="line"><span class="attr">server-id</span>=<span class="number">17</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建用于从数据库登录主数据库的用户</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;slave&#x27;</span>@<span class="string">&#x27;172.16.212.18&#x27;</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>配置从服务器。</li>
-</ul>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CHANGE MASTER <span class="keyword">TO</span> <span class="attribute">master_host</span>=<span class="string">&#x27;172.16.212.17&#x27;</span>, <span class="attribute">master_user</span>=<span class="string">&#x27;slave&#x27;</span>, \</span><br><span class="line">-&gt; <span class="attribute">master_password</span>=<span class="string">&#x27;123456&#x27;</span>, <span class="attribute">master_log_file</span>=<span class="string">&#x27;mysqlbin-log.000002&#x27;</span>, <span class="attribute">master_log_pos</span>=639;</span><br><span class="line"></span><br><span class="line">mysql&gt; start slave;</span><br><span class="line"></span><br><span class="line">mysql&gt; show slave status \G</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若要停止从服务器同步，在从服务器mysql中执行</span></span><br><span class="line">slave stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检测 TODO 主从数据库  相关命令</span></span><br><span class="line">在主数据库中插入数据，从数据库中同样也插入数据。</span><br><span class="line">在从数据库中插入数据，在主数据库中并不能看到数据。</span><br><span class="line">成功。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ol start="7">
+<ol start="7" type="1">
 <li>搭建Memcached缓存服务器。</li>
 </ol>
 <ul>
 <li>安装依赖包：yum -y install gcc libevent-devel</li>
-<li>编译安装Memcached</li>
+<li>编译安装Memcached <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf memcached-<span class="number">1.5</span>.<span class="number">8</span>.tar.gz</span><br><span class="line"><span class="keyword">cd</span> memcached-<span class="number">1.5</span>.<span class="number">8</span></span><br><span class="line">./configure</span><br><span class="line"><span class="keyword">make</span> &amp;&amp; <span class="keyword">make</span> install</span><br></pre></td></tr></table></figure></li>
+<li>添加系统服务、配置开机自启 <figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> scripts</span><br><span class="line">cp memcached-init <span class="string">/etc/init.d/memcached</span></span><br><span class="line">chkconfig <span class="params">--add</span> memcached</span><br></pre></td></tr></table></figure></li>
+<li>在memcached服务脚本中还调用了start-memcached脚本，需拷贝 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="regexp">/usr/</span>share<span class="regexp">/memcached/</span>scripts</span><br><span class="line">cp start-memcached <span class="regexp">/usr/</span>share<span class="regexp">/memcached/</span>scripts/</span><br></pre></td></tr></table></figure></li>
+<li>为start-memcached脚本创建连接 <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s <span class="regexp">/usr/</span>local<span class="regexp">/bin/m</span>emcached <span class="regexp">/usr/</span>bin/memcached</span><br></pre></td></tr></table></figure></li>
+<li>目前还不能通过service命令启动memcached服务，因为memcached中的脚本依赖于perl和start-stop-daemon，需单独下载。 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf dpkg_1.<span class="number">13.11</span>.tar.gz </span><br><span class="line"><span class="keyword">cd</span> dpkg-<span class="number">1.13</span>.<span class="number">11</span>/</span><br><span class="line">./configure --without-libselinux &amp;&amp; <span class="keyword">make</span></span><br><span class="line"><span class="keyword">cp</span> utils/start-<span class="keyword">stop</span>-daemon /usr/local/sbin/</span><br></pre></td></tr></table></figure></li>
+<li>启动Memcached服务。 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vi <span class="regexp">/etc/m</span>emcached.conf 创建配置文件，内容如下：</span><br><span class="line">-m <span class="number">512</span>      <span class="comment"># 分配的内存大小，单位是MB，默认为64MB</span></span><br><span class="line">-p <span class="number">11211</span>    <span class="comment"># 配置监听的TCP端口，默认为11211</span></span><br><span class="line">-u nobody   <span class="comment"># 配置Memcached的工作用户</span></span><br><span class="line">-c <span class="number">1024</span>     <span class="comment"># 配置最高并发连接数，默认1024</span></span><br><span class="line">-t <span class="number">16</span>       <span class="comment"># 配置使用的线程数，默认为4</span></span><br><span class="line"></span><br><span class="line">注：可以通过：<span class="regexp">/usr/</span>local<span class="regexp">/bin/m</span>emcached -H 查看说明，根据服务器的硬件配置。</span><br><span class="line"></span><br><span class="line">service memcached start</span><br><span class="line">iptables -I INPUT -p tcp --dport <span class="number">11211</span> -j ACCEPT</span><br></pre></td></tr></table></figure></li>
+<li>PHP访问Memcached。 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">将PHP的Memcached扩展和libmemcached下载到<span class="number">3</span>、<span class="number">4</span>、<span class="number">5</span>号服务器中，进行以下安装过程:</span><br><span class="line"><span class="comment"># 安装依赖包</span></span><br><span class="line">yum -y install cyrus-sasl-devel</span><br><span class="line"><span class="comment"># 编译安装libmemcached</span></span><br><span class="line">tar -zxvf libmemcached-<span class="number">1.0</span>.<span class="number">18</span>.tar.gz </span><br><span class="line">cd libmemcached-<span class="number">1.0</span>.<span class="number">18</span></span><br><span class="line">./configure &amp;&amp; make &amp;&amp; make install &amp;&amp; cd ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># php7 这种方法不行</span></span><br><span class="line"><span class="comment"># 为PHP的Memcached扩展生成configure文件</span></span><br><span class="line">tar -zxvf memcached-<span class="number">2.2</span>.<span class="number">0</span>.tgz</span><br><span class="line">cd memcached-<span class="number">2.2</span>.<span class="number">0</span></span><br><span class="line"><span class="regexp">/usr/</span>local<span class="regexp">/php/</span>bin/phpize</span><br><span class="line"><span class="comment"># 编译安装PHP的Memcached扩展</span></span><br><span class="line">.<span class="regexp">/configure --with-php-config=/u</span>sr<span class="regexp">/local/</span>php<span class="regexp">/bin/</span>php-config</span><br><span class="line">make &amp;&amp; make install &amp;&amp; cd ..</span><br><span class="line"></span><br><span class="line">https:<span class="regexp">//</span>blog.csdn.net<span class="regexp">/xahuo/</span>article<span class="regexp">/details/</span><span class="number">50372736</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在PHP配置文件php.ini中加载Memcached扩展</span></span><br><span class="line">vi <span class="regexp">/usr/</span>local<span class="regexp">/php/</span>lib/php.ini</span><br><span class="line">; memcached extension</span><br><span class="line">extension=usr<span class="regexp">/local/</span>php<span class="regexp">/lib/</span>php<span class="regexp">/extensions/</span>no-debug-non-zts-<span class="number">20151012</span>/memcached.so</span><br><span class="line"><span class="comment"># PHP_FPM重新加载配置</span></span><br><span class="line">service php-fpm reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在/data/www下编写测试页面test.php</span></span><br><span class="line">&lt;?php</span><br><span class="line"><span class="variable">$mem</span>=new Memcached();</span><br><span class="line"><span class="variable">$mem</span>-&gt;addServer(<span class="string">&#x27;172.16.212.19&#x27;</span>, <span class="number">11211</span>);</span><br><span class="line"><span class="variable">$mem</span>-&gt;set(<span class="string">&#x27;UserName&#x27;</span>, <span class="string">&#x27;James&#x27;</span>);</span><br><span class="line">echo <span class="variable">$mem</span>-&gt;get(<span class="string">&#x27;UserName&#x27;</span>);</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用telnet测试端口是否可以访问: telnet 172.16.212.19 11211</span></span><br><span class="line"><span class="comment"># 9号服务器需要打开端口</span></span><br><span class="line">iptables -I INPUT -p tcp --dport <span class="number">11211</span> -j ACCEPT</span><br><span class="line"><span class="comment"># 访问成功</span></span><br></pre></td></tr></table></figure></li>
 </ul>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf memcached-<span class="number">1.5</span>.<span class="number">8</span>.tar.gz</span><br><span class="line"><span class="keyword">cd</span> memcached-<span class="number">1.5</span>.<span class="number">8</span></span><br><span class="line">./configure</span><br><span class="line"><span class="keyword">make</span> &amp;&amp; <span class="keyword">make</span> install</span><br></pre></td></tr></table></figure>
-<ul>
-<li>添加系统服务、配置开机自启</li>
-</ul>
-<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> scripts</span><br><span class="line">cp memcached-init <span class="string">/etc/init.d/memcached</span></span><br><span class="line">chkconfig <span class="params">--add</span> memcached</span><br></pre></td></tr></table></figure>
-<ul>
-<li>在memcached服务脚本中还调用了start-memcached脚本，需拷贝</li>
-</ul>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="regexp">/usr/</span>share<span class="regexp">/memcached/</span>scripts</span><br><span class="line">cp start-memcached <span class="regexp">/usr/</span>share<span class="regexp">/memcached/</span>scripts/</span><br></pre></td></tr></table></figure>
-<ul>
-<li>为start-memcached脚本创建连接</li>
-</ul>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s <span class="regexp">/usr/</span>local<span class="regexp">/bin/m</span>emcached <span class="regexp">/usr/</span>bin/memcached</span><br></pre></td></tr></table></figure>
-<ul>
-<li>目前还不能通过service命令启动memcached服务，因为memcached中的脚本依赖于perl和start-stop-daemon，需单独下载。</li>
-</ul>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf dpkg_1.<span class="number">13.11</span>.tar.gz </span><br><span class="line"><span class="keyword">cd</span> dpkg-<span class="number">1.13</span>.<span class="number">11</span>/</span><br><span class="line">./configure --without-libselinux &amp;&amp; <span class="keyword">make</span></span><br><span class="line"><span class="keyword">cp</span> utils/start-<span class="keyword">stop</span>-daemon /usr/local/sbin/</span><br></pre></td></tr></table></figure>
-<ul>
-<li>启动Memcached服务。</li>
-</ul>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vi <span class="regexp">/etc/m</span>emcached.conf 创建配置文件，内容如下：</span><br><span class="line">-m <span class="number">512</span>      <span class="comment"># 分配的内存大小，单位是MB，默认为64MB</span></span><br><span class="line">-p <span class="number">11211</span>    <span class="comment"># 配置监听的TCP端口，默认为11211</span></span><br><span class="line">-u nobody   <span class="comment"># 配置Memcached的工作用户</span></span><br><span class="line">-c <span class="number">1024</span>     <span class="comment"># 配置最高并发连接数，默认1024</span></span><br><span class="line">-t <span class="number">16</span>       <span class="comment"># 配置使用的线程数，默认为4</span></span><br><span class="line"></span><br><span class="line">注：可以通过：<span class="regexp">/usr/</span>local<span class="regexp">/bin/m</span>emcached -H 查看说明，根据服务器的硬件配置。</span><br><span class="line"></span><br><span class="line">service memcached start</span><br><span class="line">iptables -I INPUT -p tcp --dport <span class="number">11211</span> -j ACCEPT</span><br></pre></td></tr></table></figure>
-<ul>
-<li>PHP访问Memcached。</li>
-</ul>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">将PHP的Memcached扩展和libmemcached下载到<span class="number">3</span>、<span class="number">4</span>、<span class="number">5</span>号服务器中，进行以下安装过程:</span><br><span class="line"><span class="comment"># 安装依赖包</span></span><br><span class="line">yum -y install cyrus-sasl-devel</span><br><span class="line"><span class="comment"># 编译安装libmemcached</span></span><br><span class="line">tar -zxvf libmemcached-<span class="number">1.0</span>.<span class="number">18</span>.tar.gz </span><br><span class="line">cd libmemcached-<span class="number">1.0</span>.<span class="number">18</span></span><br><span class="line">./configure &amp;&amp; make &amp;&amp; make install &amp;&amp; cd ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># php7 这种方法不行</span></span><br><span class="line"><span class="comment"># 为PHP的Memcached扩展生成configure文件</span></span><br><span class="line">tar -zxvf memcached-<span class="number">2.2</span>.<span class="number">0</span>.tgz</span><br><span class="line">cd memcached-<span class="number">2.2</span>.<span class="number">0</span></span><br><span class="line"><span class="regexp">/usr/</span>local<span class="regexp">/php/</span>bin/phpize</span><br><span class="line"><span class="comment"># 编译安装PHP的Memcached扩展</span></span><br><span class="line">.<span class="regexp">/configure --with-php-config=/u</span>sr<span class="regexp">/local/</span>php<span class="regexp">/bin/</span>php-config</span><br><span class="line">make &amp;&amp; make install &amp;&amp; cd ..</span><br><span class="line"></span><br><span class="line">https:<span class="regexp">//</span>blog.csdn.net<span class="regexp">/xahuo/</span>article<span class="regexp">/details/</span><span class="number">50372736</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在PHP配置文件php.ini中加载Memcached扩展</span></span><br><span class="line">vi <span class="regexp">/usr/</span>local<span class="regexp">/php/</span>lib/php.ini</span><br><span class="line">; memcached extension</span><br><span class="line">extension=usr<span class="regexp">/local/</span>php<span class="regexp">/lib/</span>php<span class="regexp">/extensions/</span>no-debug-non-zts-<span class="number">20151012</span>/memcached.so</span><br><span class="line"><span class="comment"># PHP_FPM重新加载配置</span></span><br><span class="line">service php-fpm reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在/data/www下编写测试页面test.php</span></span><br><span class="line">&lt;?php</span><br><span class="line"><span class="variable">$mem</span>=new Memcached();</span><br><span class="line"><span class="variable">$mem</span>-&gt;addServer(<span class="string">&#x27;172.16.212.19&#x27;</span>, <span class="number">11211</span>);</span><br><span class="line"><span class="variable">$mem</span>-&gt;set(<span class="string">&#x27;UserName&#x27;</span>, <span class="string">&#x27;James&#x27;</span>);</span><br><span class="line">echo <span class="variable">$mem</span>-&gt;get(<span class="string">&#x27;UserName&#x27;</span>);</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用telnet测试端口是否可以访问: telnet 172.16.212.19 11211</span></span><br><span class="line"><span class="comment"># 9号服务器需要打开端口</span></span><br><span class="line">iptables -I INPUT -p tcp --dport <span class="number">11211</span> -j ACCEPT</span><br><span class="line"><span class="comment"># 访问成功</span></span><br></pre></td></tr></table></figure>
-<ol start="8">
+<ol start="8" type="1">
 <li>ThinkPHP项目部署</li>
 </ol>
 <ul>
-<li>创建MySQL独立数据库用户</li>
+<li>创建MySQL独立数据库用户 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在7号服务器中启动MySql客户端，登录MySql服务器</span></span><br><span class="line">mysql -uroot -p123456</span><br><span class="line"><span class="comment"># 创建数据库</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> itshop;</span><br><span class="line"><span class="comment"># 为4、5号服务器创建无权限用户itshop，密码为123456</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> <span class="string">&#x27;itshop&#x27;</span>@<span class="string">&#x27;172.16.212.14&#x27;</span> <span class="keyword">identified</span> <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> <span class="string">&#x27;itshop&#x27;</span>@<span class="string">&#x27;172.16.212.15&#x27;</span> <span class="keyword">identified</span> <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"><span class="comment"># 为用户分配指定数据库的权限</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
 </ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在7号服务器中启动MySql客户端，登录MySql服务器</span></span><br><span class="line">mysql -uroot -p123456</span><br><span class="line"><span class="comment"># 创建数据库</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> itshop;</span><br><span class="line"><span class="comment"># 为4、5号服务器创建无权限用户itshop，密码为123456</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> <span class="string">&#x27;itshop&#x27;</span>@<span class="string">&#x27;172.16.212.14&#x27;</span> <span class="keyword">identified</span> <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> <span class="string">&#x27;itshop&#x27;</span>@<span class="string">&#x27;172.16.212.15&#x27;</span> <span class="keyword">identified</span> <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"><span class="comment"># 为用户分配指定数据库的权限</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div><div class="post-copyright"><script type="text/javascript" src="/js/copyright.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copyright.css"><p><span>本文标题：</span>LNMP分布式集群搭建</p><p><span>文章作者：</span>七月流火</p><p><span>发布时间：</span>2018-06-16</p><p><span>最后更新：</span>2020-05-07</p><p><span>原始链接：</span><a href="/2018/06/16/LNMP分布式集群搭建/">https://qiyueliuhuo.github.io/2018/06/16/LNMP%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/</a><span class="copy-path"><i class="fa fa-clipboard" data-clipboard-text="https://qiyueliuhuo.github.io/2018/06/16/LNMP%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/"></i></span></p><p><span>版权声明：</span>转载请注明出处。</p></div><br><div class="tags"></div><div class="post-nav"><a class="pre" href="/2018/07/11/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E7%B4%A2%E5%BC%95/">数据库之索引</a><a class="next" href="/2018/05/04/VIM-%E5%BF%AB%E6%8D%B7%E9%94%AE/">VIM 快捷键</a></div><div id="vcomment"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script><script>var notify = 'false' ? true : false;
-var verify = 'false' ? true : false;
-var GUEST_INFO = ['nick','mail','link'];
-var guest_info = 'nick,mail,link'.split(',').filter(function(item){
-  return GUEST_INFO.indexOf(item) > -1
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/11/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E7%B4%A2%E5%BC%95/" rel="prev" title="数据库之索引">
+      <i class="fa fa-chevron-left"></i> 数据库之索引
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/05/04/VIM-%E5%BF%AB%E6%8D%B7%E9%94%AE/" rel="next" title="VIM 快捷键">
+      VIM 快捷键 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="七月流火"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">七月流火</p>
+  <div class="site-description" itemprop="description">程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">七月流火</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Bqq9R5gWyWpajSOgwN05dN2W-MdYXbMMI',
+      appKey     : '4cmz7U3V4sJdUbLTG757skov',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
 });
-guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
-window.valine = new Valine({
-  el:'#vcomment',
-  notify:notify,
-  verify:verify,
-  appId:'Bqq9R5gWyWpajSOgwN05dN2W-MdYXbMMI',
-  appKey:'4cmz7U3V4sJdUbLTG757skov',
-  placeholder:'相信你不会灌水~',
-  avatar:'mm',
-  guest_info:guest_info,
-  pageSize:'10'
-})</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://qiyueliuhuo.github.io"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/%E5%A4%96%E7%BD%91/" style="font-size: 15px;">外网</a> <a href="/tags/%E4%BA%BA%E7%94%9F/" style="font-size: 15px;">人生</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 15px;">生活</a> <a href="/tags/%E6%99%BA%E6%85%A7/" style="font-size: 15px;">智慧</a> <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" style="font-size: 15px;">科学上网</a> <a href="/tags/%E8%B0%B7%E6%AD%8C/" style="font-size: 15px;">谷歌</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 15px;">云服务器</a> <a href="/tags/%E7%A4%BE%E4%BA%A4/" style="font-size: 15px;">社交</a> <a href="/tags/%E5%85%8D%E8%B4%B9/" style="font-size: 15px;">免费</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15px;">面试</a> <a href="/tags/javaWeb/" style="font-size: 15px;">javaWeb</a> <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 15px;">后端</a> <a href="/tags/spring/" style="font-size: 15px;">spring</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/">Yolo解读</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/10/27/%E6%8E%A8%E7%90%86%E6%96%B9%E5%BC%8F/">推理方式</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/08/01/%E3%80%8A%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">《亲密关系》阅读笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/28/R-CNN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">R-CNN论文阅读笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/28/%E9%82%A3%E4%BA%9B%E6%83%85%E8%AF%9D/">那些情话</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/24/SSH%E8%BF%9E%E6%8E%A5%E3%80%81%E8%BF%9C%E7%A8%8B%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/">SSH连接、远程上传下载文件</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/20/%E7%A2%8E%E7%A2%8E%E5%BF%B5/">碎碎念</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/06/13/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B9%8B%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/">神经网络之反向传播算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/31/%E6%88%91%E4%BD%BF%E7%94%A8%E7%9A%84-macOS-%E5%BA%94%E7%94%A8/">我使用的 macOS 应用</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91-%E8%B0%B7%E6%AD%8C%E5%85%8D%E8%B4%B9%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8Google-Cloud-%E6%90%AD%E5%BB%BAv2ray%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/">科学上网:谷歌免费云服务器Google Cloud 搭建v2ray服务器详细教程</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://www.haomwei.com/" title="屠城" target="_blank">屠城</a><ul></ul><a href="http://www.mindhacks.cn/" title="刘未鹏 | Mind Hacks" target="_blank">刘未鹏 | Mind Hacks</a><ul></ul><a href="https://www.liaoxuefeng.com/" title="廖雪峰" target="_blank">廖雪峰</a><ul></ul><a href="https://www.tbfeng.com/" title="天边风" target="_blank">天边风</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2020 <a href="/." rel="nofollow">七月流火.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/love.js"></script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div><!-- hexo-inject:begin --><!-- hexo-inject:end --></body></html>
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

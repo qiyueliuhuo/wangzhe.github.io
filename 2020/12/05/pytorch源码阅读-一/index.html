@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiyueliuhuo.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="阅读开源代码是提高写代码能力最好的方式之一，现在入坑机器学习领域，在众多框架中选择pytorch框架作为自己基本的深度学习框架，现在开始从最简单的pytorch代码部分阅读，学习下python技巧顺便深入学习下神经网络的代码实践。 关于阅读源码，我一开始在项目中调用pytorch模块和类，通过pycharm追踪源码，在pycharm中可以直接查看依赖包torch中源码，但是这样也不方便阅读torc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pytorch源码阅读(一)">
+<meta property="og:url" content="https://qiyueliuhuo.github.io/2020/12/05/pytorch%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-%E4%B8%80/index.html">
+<meta property="og:site_name" content="七月流火">
+<meta property="og:description" content="阅读开源代码是提高写代码能力最好的方式之一，现在入坑机器学习领域，在众多框架中选择pytorch框架作为自己基本的深度学习框架，现在开始从最简单的pytorch代码部分阅读，学习下python技巧顺便深入学习下神经网络的代码实践。 关于阅读源码，我一开始在项目中调用pytorch模块和类，通过pycharm追踪源码，在pycharm中可以直接查看依赖包torch中源码，但是这样也不方便阅读torc">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201206000548.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/torchvision.datasets.mnist.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201210142514.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/torchvision.datasets.imagenet.png">
+<meta property="article:published_time" content="2020-12-05T15:21:34.000Z">
+<meta property="article:modified_time" content="2020-12-11T04:18:27.380Z">
+<meta property="article:author" content="七月流火">
+<meta property="article:tag" content="学习 思考">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201206000548.png">
+
+<link rel="canonical" href="https://qiyueliuhuo.github.io/2020/12/05/pytorch%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-%E4%B8%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>pytorch源码阅读(一) | 七月流火</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45a8b0e33cead32cd5945b033baa7255";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">七月流火</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">最怕你一生碌碌无为，还安慰自己平凡可贵。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qiyueliuhuo.github.io/2020/12/05/pytorch%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-%E4%B8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="七月流火">
+      <meta itemprop="description" content="程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月流火">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          pytorch源码阅读(一)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-05 23:21:34" itemprop="dateCreated datePublished" datetime="2020-12-05T23:21:34+08:00">2020-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-11 12:18:27" itemprop="dateModified" datetime="2020-12-11T12:18:27+08:00">2020-12-11</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/12/05/pytorch%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-%E4%B8%80/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/12/05/pytorch%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-%E4%B8%80/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>阅读开源代码是提高写代码能力最好的方式之一，现在入坑机器学习领域，在众多框架中选择pytorch框架作为自己基本的深度学习框架，现在开始从最简单的pytorch代码部分阅读，学习下python技巧顺便深入学习下神经网络的代码实践。</p>
+<p>关于阅读源码，我一开始在项目中调用pytorch模块和类，通过pycharm追踪源码，在pycharm中可以直接查看依赖包torch中源码，但是这样也不方便阅读torch源码，一个原因是pycharm中查看依赖包的源码内容，查看源码文件的方式是只读模式，没法在里面注释一些自己理解的东西，另一个原因是通过单步调试阅读代码是最容易理解代码的方式，想了想pytorch源码里面应该有对源码的测试代码可以直接跑起来，然后一步步运行，这样看着更方便。</p>
+<p>从github上下载pytorch代码，通过CONTRIBUTING.md文件中指导编译源码，注意使用：<code>python setup.py develop</code> 以开发模式构建代码。这个过程在我的电脑上要跑将近两小时。。。忘了什么原因导致我跑了两次。。。四个小时没了(呜呜...) <img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201206000548.png" /></p>
+<p>先从加载和处理数据源码了解。</p>
+<a id="more"></a>
+<blockquote>
+<p>注：笔者阅读的pytorch版本为1.7.0，torchvision版本为0.6</p>
+</blockquote>
+<h2 id="dataset-相关源码">Dataset 相关源码</h2>
+<h3 id="mnist类">MNIST类</h3>
+<p>类继承图：</p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/torchvision.datasets.mnist.png" /></p>
+<p>先来看看最常用的mnist数据集的使用，下面两行使用torchvision中提供的MNIST数据集类定义了两个数据集类，分别为训练数据集和测试数据集，那么为什么需要定义两个同样的数据集呢？其中一个因为是训练和测试使用的数据集不一样；另一个原因是训练和测试时候对应的batch_size大小不一样。下面进一步分析datasets.MNIST代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dataset1 = datasets.MNIST(<span class="string">&#x27;../data&#x27;</span>, train=<span class="literal">True</span>, download=<span class="literal">True</span>,</span><br><span class="line">                       transform=transform)</span><br><span class="line">dataset2 = datasets.MNIST(<span class="string">&#x27;../data&#x27;</span>, train=<span class="literal">False</span>,</span><br><span class="line">                          transform=transform)</span><br><span class="line">train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)</span><br><span class="line">test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)</span><br></pre></td></tr></table></figure>
+<p>下面的代码来自<code>torchvision.datasets.mnist</code>模块</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .vision <span class="keyword">import</span> VisionDataset</span><br><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> os.path</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> codecs</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">from</span> .utils <span class="keyword">import</span> download_url, download_and_extract_archive, extract_archive, \</span><br><span class="line">    verify_str_arg</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MNIST</span>(<span class="params">VisionDataset</span>):</span></span><br><span class="line">    resources = [</span><br><span class="line">        (<span class="string">&quot;http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz&quot;</span>, <span class="string">&quot;f68b3c2dcbeaaa9fbdd348bbdeb94873&quot;</span>),</span><br><span class="line">        (<span class="string">&quot;http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz&quot;</span>, <span class="string">&quot;d53e105ee54ea40749a09fcbcd1e9432&quot;</span>),</span><br><span class="line">        (<span class="string">&quot;http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz&quot;</span>, <span class="string">&quot;9fb629c4189551a2d022fa330f9573f3&quot;</span>),</span><br><span class="line">        (<span class="string">&quot;http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz&quot;</span>, <span class="string">&quot;ec29112dd5afa0611ce80d1b7f02629c&quot;</span>)</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    training_file = <span class="string">&#x27;training.pt&#x27;</span></span><br><span class="line">    test_file = <span class="string">&#x27;test.pt&#x27;</span></span><br><span class="line">    classes = [<span class="string">&#x27;0 - zero&#x27;</span>, <span class="string">&#x27;1 - one&#x27;</span>, <span class="string">&#x27;2 - two&#x27;</span>, <span class="string">&#x27;3 - three&#x27;</span>, <span class="string">&#x27;4 - four&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;5 - five&#x27;</span>, <span class="string">&#x27;6 - six&#x27;</span>, <span class="string">&#x27;7 - seven&#x27;</span>, <span class="string">&#x27;8 - eight&#x27;</span>, <span class="string">&#x27;9 - nine&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">train_labels</span>(<span class="params">self</span>):</span></span><br><span class="line">        warnings.warn(<span class="string">&quot;train_labels has been renamed targets&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> self.targets</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_labels</span>(<span class="params">self</span>):</span></span><br><span class="line">        warnings.warn(<span class="string">&quot;test_labels has been renamed targets&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> self.targets</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">train_data</span>(<span class="params">self</span>):</span></span><br><span class="line">        warnings.warn(<span class="string">&quot;train_data has been renamed data&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> self.data</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_data</span>(<span class="params">self</span>):</span></span><br><span class="line">        warnings.warn(<span class="string">&quot;test_data has been renamed data&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> self.data</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>类<code>MNIST</code>继承自<code>VisionDataset</code>，从名称可以知道<code>VisionDataset</code>是对流行的视觉数据集的抽象类，我从子类开始分析，后面再阅读分析<code>VisionDataset</code>类。<code>MNIST</code>类前面定义了四个属性，其中<code>training_file</code>、<code>test_file</code>保存将原始Minst数据处理之后的tensor格式的训练和测试数据的文件名。另外有四个方法分别是<code>train_labels</code>、<code>test_labels</code>、<code>train_data</code>、<code>test_data</code>，它们都被<code>@property</code>注解所修饰，<code>@property</code>这种注解装饰器来创建<strong>只读属性</strong>，<span class="citation" data-cites="property装饰器会将">@property装饰器会将</span><strong>方法</strong>转换为相同名称的<strong>只读属性</strong>，可以与所定义的属性配合使用，这样可以防止属性被修改。那么我们就可以通过mnist.train_labels得到实例的私有属性，而实际上该过程调用的是train_labels()函数。上面部分除了<code>@property</code>其他的都很好理解了。下面来看这个类的其余部分：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, root, train=<span class="literal">True</span>, transform=<span class="literal">None</span>, target_transform=<span class="literal">None</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">             download=<span class="literal">False</span></span>):</span></span><br><span class="line">    <span class="built_in">super</span>(MNIST, self).__init__(root, transform=transform,</span><br><span class="line">                                target_transform=target_transform)</span><br><span class="line">    self.train = train  <span class="comment"># training set or test set</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> download:</span><br><span class="line">        self.download()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self._check_exists():</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">&#x27;Dataset not found.&#x27;</span> +</span><br><span class="line">                           <span class="string">&#x27; You can use download=True to download it&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> self.train:</span><br><span class="line">        data_file = self.training_file</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        data_file = self.test_file</span><br><span class="line">    self.data, self.targets = torch.load(os.path.join(self.processed_folder, data_file))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span>(<span class="params">self, index</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        index (int): Index</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        tuple: (image, target) where target is index of the target class.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    img, target = self.data[index], <span class="built_in">int</span>(self.targets[index])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># doing this so that it is consistent with all other datasets</span></span><br><span class="line">    <span class="comment"># to return a PIL Image</span></span><br><span class="line">    img = Image.fromarray(img.numpy(), mode=<span class="string">&#x27;L&#x27;</span>)   <span class="comment"># @3</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> self.transform <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        img = self.transform(img)         <span class="comment"># @1     </span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> self.target_transform <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        target = self.target_transform(target)    <span class="comment"># @2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> img, target</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__len__</span>(<span class="params">self</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">len</span>(self.data)</span><br></pre></td></tr></table></figure>
+<p><code>__init__</code>该类的<strong>构造器(constructor)</strong>函数入参<code>transform</code>和<code>target_transform</code>分别传入对数据图像和标签的预处理，在<strong><span class="citation" data-cites="1和">@1和</span><span class="citation" data-cites="2">@2</span></strong>处可以看到在每一张图像返回前分别对图像和标签进行用户自定义预处理。传入的<code>train</code>参数来决定该MNIST的dataset会返回训练集or测试集中的数据。</p>
+<p><code>__getitem__</code>根据python3中定义，如果在类中定义了<code>__getitem__()</code>方法，那么它的实例对象（假设为P）就可以以P[key]形式取值，当实例对象做P[key]运算时，就会调用类中的<code>__getitem__()</code>方法，这是一个很有意思也很有用的特性。具体到这个类的<code>key</code>为训练样本的<code>idex</code>为<code>int</code>类型代表第几个数据样本。在<strong><span class="citation" data-cites="3">@3</span></strong>处将图像转成PIL图像对象，该PIL对象最终会通过transform预处理为<code>tonsor</code>对象。类<code>MNIST</code>剩余部分最主要就是下载<code>download</code>函数，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@property</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">raw_folder</span>(<span class="params">self</span>):</span></span><br><span class="line">    <span class="keyword">return</span> os.path.join(self.root, self.__class__.__name__, <span class="string">&#x27;raw&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@property</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">processed_folder</span>(<span class="params">self</span>):</span></span><br><span class="line">    <span class="keyword">return</span> os.path.join(self.root, self.__class__.__name__, <span class="string">&#x27;processed&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@property</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">class_to_idx</span>(<span class="params">self</span>):</span></span><br><span class="line">    <span class="keyword">return</span> &#123;_class: i <span class="keyword">for</span> i, _class <span class="keyword">in</span> <span class="built_in">enumerate</span>(self.classes)&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_check_exists</span>(<span class="params">self</span>):</span></span><br><span class="line">    <span class="keyword">return</span> (os.path.exists(os.path.join(self.processed_folder,</span><br><span class="line">                                        self.training_file)) <span class="keyword">and</span></span><br><span class="line">            os.path.exists(os.path.join(self.processed_folder,</span><br><span class="line">                                        self.test_file)))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Download the MNIST data if it doesn&#x27;t exist in processed_folder already.&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> self._check_exists():         <span class="comment"># @4</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    os.makedirs(self.raw_folder, exist_ok=<span class="literal">True</span>)</span><br><span class="line">    os.makedirs(self.processed_folder, exist_ok=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># download files</span></span><br><span class="line">    <span class="keyword">for</span> url, md5 <span class="keyword">in</span> self.resources:</span><br><span class="line">        filename = url.rpartition(<span class="string">&#x27;/&#x27;</span>)[<span class="number">2</span>]</span><br><span class="line">        download_and_extract_archive(url, download_root=self.raw_folder, filename=filename, md5=md5)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># process and save as torch files</span></span><br><span class="line">    print(<span class="string">&#x27;Processing...&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    training_set = (</span><br><span class="line">        read_image_file(os.path.join(self.raw_folder, <span class="string">&#x27;train-images-idx3-ubyte&#x27;</span>)),</span><br><span class="line">        read_label_file(os.path.join(self.raw_folder, <span class="string">&#x27;train-labels-idx1-ubyte&#x27;</span>))</span><br><span class="line">    )</span><br><span class="line">    test_set = (</span><br><span class="line">        read_image_file(os.path.join(self.raw_folder, <span class="string">&#x27;t10k-images-idx3-ubyte&#x27;</span>)),</span><br><span class="line">        read_label_file(os.path.join(self.raw_folder, <span class="string">&#x27;t10k-labels-idx1-ubyte&#x27;</span>))</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(self.processed_folder, self.training_file), <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        torch.save(training_set, f)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(self.processed_folder, self.test_file), <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        torch.save(test_set, f)</span><br><span class="line"></span><br><span class="line">    print(<span class="string">&#x27;Done!&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">extra_repr</span>(<span class="params">self</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Split: &#123;&#125;&quot;</span>.<span class="built_in">format</span>(<span class="string">&quot;Train&quot;</span> <span class="keyword">if</span> self.train <span class="keyword">is</span> <span class="literal">True</span> <span class="keyword">else</span> <span class="string">&quot;Test&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><code>download</code>函数下载原始mnist数据并将训练图像数据、训练标签数据存储在一个<code>training_file</code>文件中，将测试图像数据、测试标签数据存在<code>test_file</code>文件中，<strong><span class="citation" data-cites="4">@4</span></strong>处可以看到当<code>processed_folder</code>目录下存在这两个文件，那么就不会通过网络下载，直接读取本地训练测试数据文件。另外，像<code>download_and_extract_archive</code>函数的具体实现，并没有在上面给出，这个就是更加细节的代码实现，此次代码阅读会忽略很多具体细节实现，专注于大的<strong>框架实现</strong>。</p>
+<p><code>MNIST</code>类继承自<code>VisionDataset</code>类，下面我们看看这个类中抽象出了哪些功能。</p>
+<h3 id="visiondataset类">VisionDataset类</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VisionDataset</span>(<span class="params">data.Dataset</span>):</span></span><br><span class="line">    _repr_indent = <span class="number">4</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, root, transforms=<span class="literal">None</span>, transform=<span class="literal">None</span>, target_transform=<span class="literal">None</span></span>):</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(root, torch._six.string_classes):</span><br><span class="line">            root = os.path.expanduser(root)</span><br><span class="line">        self.root = root</span><br><span class="line"></span><br><span class="line">        has_transforms = transforms <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span></span><br><span class="line">        has_separate_transform = transform <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">or</span> target_transform <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span></span><br><span class="line">        <span class="keyword">if</span> has_transforms <span class="keyword">and</span> has_separate_transform:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;Only transforms or transform/target_transform can &quot;</span></span><br><span class="line">                             <span class="string">&quot;be passed as argument&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># for backwards-compatibility                              @5</span></span><br><span class="line">        self.transform = transform</span><br><span class="line">        self.target_transform = target_transform</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> has_separate_transform:</span><br><span class="line">            transforms = StandardTransform(transform, target_transform)   <span class="comment">#  @6</span></span><br><span class="line">        self.transforms = transforms</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span>(<span class="params">self, index</span>):</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span>(<span class="params">self</span>):</span></span><br><span class="line">        head = <span class="string">&quot;Dataset &quot;</span> + self.__class__.__name__</span><br><span class="line">        body = [<span class="string">&quot;Number of datapoints: &#123;&#125;&quot;</span>.<span class="built_in">format</span>(self.__len__())]</span><br><span class="line">        <span class="keyword">if</span> self.root <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            body.append(<span class="string">&quot;Root location: &#123;&#125;&quot;</span>.<span class="built_in">format</span>(self.root))</span><br><span class="line">        body += self.extra_repr().splitlines()</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">hasattr</span>(self, <span class="string">&quot;transforms&quot;</span>) <span class="keyword">and</span> self.transforms <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            body += [<span class="built_in">repr</span>(self.transforms)]</span><br><span class="line">        lines = [head] + [<span class="string">&quot; &quot;</span> * self._repr_indent + line <span class="keyword">for</span> line <span class="keyword">in</span> body]</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;\n&#x27;</span>.join(lines)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_format_transform_repr</span>(<span class="params">self, transform, head</span>):</span></span><br><span class="line">        lines = transform.__repr__().splitlines()</span><br><span class="line">        <span class="keyword">return</span> ([<span class="string">&quot;&#123;&#125;&#123;&#125;&quot;</span>.<span class="built_in">format</span>(head, lines[<span class="number">0</span>])] +</span><br><span class="line">                [<span class="string">&quot;&#123;&#125;&#123;&#125;&quot;</span>.<span class="built_in">format</span>(<span class="string">&quot; &quot;</span> * <span class="built_in">len</span>(head), line) <span class="keyword">for</span> line <span class="keyword">in</span> lines[<span class="number">1</span>:]])</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">extra_repr</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<p><code>VisionDataset</code>类中在<strong><span class="citation" data-cites="5">@5</span></strong>处注释向后兼容，可以看到在<strong>构造器（constructor）</strong>的入参有<code>transforms</code>、<code>transform</code>、<code>target_transform</code>三个预处理变量，那么哪一种是方式是重构后新引入的预处理方式呢？其实从<strong><span class="citation" data-cites="6">@6</span></strong>处就可以知道，为了兼容<code>transform</code>、<code>target_transform</code>传入方式，将它们两个构造为<code>StandardTransform</code>，也就是说重构后，希望用<code>transforms</code>(注意有个s)入参取代原有的方式。并且，机智的我（嘿嘿）通过查看该文件的修改历史，如下图，就可以看到源码作者的重构的意图。</p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20201210142514.png" /></p>
+<p>再来看看<code>VisionDataset</code>类中<code>__repr__()</code>的作用，简单理解就是，python中定义当输出<code>print(instance)</code>时，等同于执行<code>print(instance.__repr__())</code>，这样用户就可以通过实现自己的<code>__repr__</code>函数来控制我们想要的信息。默认情况下，<code>__repr__()</code> 会返回和调用者有关的 “类名+object at+内存地址”信息。另外，若调用<code>repr(instance)</code>也会执行<code>__repr__()</code>函数。</p>
+<p><code>VisionDataset</code>类继承自<code>data.Dataset</code>类，下面我们看看这个类中有哪些属性和方法。</p>
+<h3 id="dataset">Dataset</h3>
+<p><code>torch.utils.data.dataset</code>模块中定义了几个数据类，是对pytorch搭建神经网络<strong>训练和测试</strong>所需要的数据集的<strong>封装和抽象</strong>。其中<code>Dataset</code>类是所有数据集类的父类，那么来看看这个类中定义了什么内容吧~</p>
+<p>下面代码是我从pytorch源代码中拷贝过来的，省略了一些模块和类的导入。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">T_co = TypeVar(<span class="string">&#x27;T_co&#x27;</span>, covariant=<span class="literal">True</span>)</span><br><span class="line">T = TypeVar(<span class="string">&#x27;T&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dataset</span>(<span class="params">Generic[T_co]</span>):</span></span><br><span class="line">    <span class="string">r&quot;&quot;&quot;An abstract class representing a :class:`Dataset`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    All datasets that represent a map from keys to data samples should subclass</span></span><br><span class="line"><span class="string">    it. All subclasses should overwrite :meth:`__getitem__`, supporting fetching a</span></span><br><span class="line"><span class="string">    data sample for a given key. Subclasses could also optionally overwrite</span></span><br><span class="line"><span class="string">    :meth:`__len__`, which is expected to return the size of the dataset by many</span></span><br><span class="line"><span class="string">    :class:`~torch.utils.data.Sampler` implementations and the default options</span></span><br><span class="line"><span class="string">    of :class:`~torch.utils.data.DataLoader`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    .. note::</span></span><br><span class="line"><span class="string">      :class:`~torch.utils.data.DataLoader` by default constructs a index</span></span><br><span class="line"><span class="string">      sampler that yields integral indices.  To make it work with a map-style</span></span><br><span class="line"><span class="string">      dataset with non-integral indices/keys, a custom sampler must be provided.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span>(<span class="params">self, index</span>) -&gt; T_co:</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__add__</span>(<span class="params">self, other: <span class="string">&#x27;Dataset[T_co]&#x27;</span></span>) -&gt; &#x27;ConcatDataset[T_co]&#x27;:</span></span><br><span class="line">        <span class="keyword">return</span> ConcatDataset([self, other])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>前两行定义两个用户自定义泛型，这种泛型编程自python3.5起开始引入到python中，有点类似于c++中泛型编程（不怎么用，忘得差不多了），c++中泛型会在编译器做类型检查和替换，属于强制类型检查，而在python中因为python类型都是弱类型，所以这种泛型编程更多的是给静态类型检测工具提供说明，帮助我们在代码编写阶段正确使用和传递python变量。目前，先忽略这些泛型类型。</p>
+<p>在<code>Dataset</code>类中定义了两个基本函数，<code>__getitem__</code>实现key-value结构，<code>__add__</code>定义两个数据集叠加的操作。</p>
+<p>下来我们来看看<code>torchvision</code>中其他的<code>dataset</code>。</p>
+<p>类继承图：</p>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/torchvision.datasets.imagenet.png" /></p>
+<h3 id="imagefolder">ImageFolder</h3>
+<p>下面源码摘抄自<code>torchvision.datasets.folder</code>模块。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ImageFolder</span>(<span class="params">DatasetFolder</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;A generic data loader where the images are arranged in this way: ::</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        root/dog/xxx.png</span></span><br><span class="line"><span class="string">        root/dog/xxy.png</span></span><br><span class="line"><span class="string">        root/dog/xxz.png</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        root/cat/123.png</span></span><br><span class="line"><span class="string">        root/cat/nsdf3.png</span></span><br><span class="line"><span class="string">        root/cat/asd932_.png</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        root (string): Root directory path.</span></span><br><span class="line"><span class="string">        transform (callable, optional): A function/transform that  takes in an PIL image</span></span><br><span class="line"><span class="string">            and returns a transformed version. E.g, ``transforms.RandomCrop``</span></span><br><span class="line"><span class="string">        target_transform (callable, optional): A function/transform that takes in the</span></span><br><span class="line"><span class="string">            target and transforms it.</span></span><br><span class="line"><span class="string">        loader (callable, optional): A function to load an image given its path.</span></span><br><span class="line"><span class="string">        is_valid_file (callable, optional): A function that takes path of an Image file</span></span><br><span class="line"><span class="string">            and check if the file is a valid file (used to check of corrupt files)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">     Attributes:</span></span><br><span class="line"><span class="string">        classes (list): List of the class names.</span></span><br><span class="line"><span class="string">        class_to_idx (dict): Dict with items (class_name, class_index).</span></span><br><span class="line"><span class="string">        imgs (list): List of (image path, class_index) tuples</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, root, transform=<span class="literal">None</span>, target_transform=<span class="literal">None</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">                 loader=default_loader, is_valid_file=<span class="literal">None</span></span>):</span></span><br><span class="line">        <span class="built_in">super</span>(ImageFolder, self).__init__(root, loader, IMG_EXTENSIONS <span class="keyword">if</span> is_valid_file <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">else</span> <span class="literal">None</span>,</span><br><span class="line">                                          transform=transform,</span><br><span class="line">                                          target_transform=target_transform,</span><br><span class="line">                                          is_valid_file=is_valid_file)</span><br><span class="line">        self.imgs = self.samples</span><br></pre></td></tr></table></figure>
+<p><code>ImageFolder</code>是一个通用的图像数据集类，它要求数据按照：</p>
+<ul>
+<li><p>root/label01/xxx.png</p></li>
+<li><p>root/label01/xxy.png</p></li>
+<li><p>root/label01/xxz.png</p></li>
+<li><p>root/label02/123.png</p></li>
+<li><p>root/label02/nsdf3.png</p></li>
+<li><p>root/label02/asd932_.png</p></li>
+</ul>
+<p>的格式存放。这是分类数据集的数据和标签表示的另一种方式，通过<strong>目录名</strong>当作标签来存放图像数据，对于制作<strong>自定义数据集</strong>还是挺方便的。</p>
+<p><code>ImageFolder</code>继承自<code>DatasetFolder</code>，从名称就可以知道<code>ImageFolder</code>是类<code>DatasetFolder</code>的具体化，它只用来处理图像数据集，一般处理<code>IMG_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.ppm', '.bmp', '.pgm', '.tif', '.tiff', '.webp')</code>中的图像格式。<code>ImageFolder</code>读取数据集后，得到三个属性：<code>classes、class_to_idx、imgs</code>。</p>
+<h2 id="sampler-相关源码">Sampler 相关源码</h2>
+<p>源码位于 <code>torch/utils/data/sampler.py</code>，那么为什么要有<code>Sampler</code>相关类呢？我觉得可以这样理解：Dataset是为数据的总体，每次训练或者测试要从总体中随机或顺序抽取一个样本或者一批样本，那么不同的<code>Sampler</code>子类就表示从数据集中不同的抽取方式。</p>
+<ul>
+<li><code>Sampler</code>：所有Sampler的父类。</li>
+<li><code>SequentialSampler</code>：顺序依次获取下标。</li>
+<li><code>RandomSampler</code>：乱序获取下标。</li>
+<li><code>SubsetRandomSampler</code>：某个子集内乱序获取下标。</li>
+<li><code>WeightedRandomSampler</code>：为每个样本设置权重，权重大表示获取概率高。</li>
+<li><code>BatchSampler</code>：即将若干个样本形成一个batch。</li>
+</ul>
+<h3 id="sampler">Sampler</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Sampler</span>(<span class="params">Generic[T_co]</span>):</span></span><br><span class="line">    <span class="string">r&quot;&quot;&quot;Base class for all Samplers.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Every Sampler subclass has to provide an :meth:`__iter__` method, providing a</span></span><br><span class="line"><span class="string">    way to iterate over indices of dataset elements, and a :meth:`__len__` method</span></span><br><span class="line"><span class="string">    that returns the length of the returned iterators.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    .. note:: The :meth:`__len__` method isn&#x27;t strictly required by</span></span><br><span class="line"><span class="string">              :class:`~torch.utils.data.DataLoader`, but is expected in any</span></span><br><span class="line"><span class="string">              calculation involving the length of a :class:`~torch.utils.data.DataLoader`.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, data_source: Optional[Sized]</span>) -&gt; <span class="keyword">None</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span>(<span class="params">self</span>) -&gt; Iterator[T_co]:</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError</span><br><span class="line"></span><br><span class="line">    <span class="comment"># NOTE [ Lack of Default `__len__` in Python Abstract Base Classes ]</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># Many times we have an abstract class representing a collection/iterable of</span></span><br><span class="line">    <span class="comment"># data, e.g., `torch.utils.data.Sampler`, with its subclasses optionally</span></span><br><span class="line">    <span class="comment"># implementing a `__len__` method. In such cases, we must make sure to not</span></span><br><span class="line">    <span class="comment"># provide a default implementation, because both straightforward default</span></span><br><span class="line">    <span class="comment"># implementations have their issues:</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#   + `return NotImplemented`:</span></span><br><span class="line">    <span class="comment">#     Calling `len(subclass_instance)` raises:</span></span><br><span class="line">    <span class="comment">#       TypeError: &#x27;NotImplementedType&#x27; object cannot be interpreted as an integer</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#   + `raise NotImplementedError()`:</span></span><br><span class="line">    <span class="comment">#     This prevents triggering some fallback behavior. E.g., the built-in</span></span><br><span class="line">    <span class="comment">#     `list(X)` tries to call `len(X)` first, and executes a different code</span></span><br><span class="line">    <span class="comment">#     path if the method is not found or `NotImplemented` is returned, while</span></span><br><span class="line">    <span class="comment">#     raising an `NotImplementedError` will propagate and and make the call</span></span><br><span class="line">    <span class="comment">#     fail where it could have use `__iter__` to complete the call.</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># Thus, the only two sensible things to do are</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#   + **not** provide a default `__len__`.</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#   + raise a `TypeError` instead, which is what Python uses when users call</span></span><br><span class="line">    <span class="comment">#     a method that is not defined on an object.</span></span><br><span class="line">    <span class="comment">#     (@ssnl verifies that this works on at least Python 3.7.)</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/11/%E6%91%B8%E7%B4%A2%E5%87%BA%E4%B8%80%E7%A7%8D%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E5%AD%A6%E4%B9%A0%E6%96%B9%E5%BC%8F/" rel="prev" title="摸索出一种属于自己学习方式">
+      <i class="fa fa-chevron-left"></i> 摸索出一种属于自己学习方式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/" rel="next" title="《机器学习》课程作业之支持向量机">
+      《机器学习》课程作业之支持向量机 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#dataset-%E7%9B%B8%E5%85%B3%E6%BA%90%E7%A0%81"><span class="nav-number">1.</span> <span class="nav-text">Dataset 相关源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mnist%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">MNIST类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#visiondataset%E7%B1%BB"><span class="nav-number">1.2.</span> <span class="nav-text">VisionDataset类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dataset"><span class="nav-number">1.3.</span> <span class="nav-text">Dataset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#imagefolder"><span class="nav-number">1.4.</span> <span class="nav-text">ImageFolder</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sampler-%E7%9B%B8%E5%85%B3%E6%BA%90%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">Sampler 相关源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sampler"><span class="nav-number">2.1.</span> <span class="nav-text">Sampler</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="七月流火"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">七月流火</p>
+  <div class="site-description" itemprop="description">程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">七月流火</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Bqq9R5gWyWpajSOgwN05dN2W-MdYXbMMI',
+      appKey     : '4cmz7U3V4sJdUbLTG757skov',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

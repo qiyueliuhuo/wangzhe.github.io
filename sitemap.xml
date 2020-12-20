@@ -2,16 +2,149 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://qiyueliuhuo.github.io/2019/02/01/hexo%E5%AD%A6%E4%B9%A0%E5%AE%9E%E8%B7%B5/</loc>
+    <loc>https://qiyueliuhuo.github.io/2020/12/15/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8BLasso%E5%9B%9E%E5%BD%92-%E7%A8%80%E7%96%8F%E8%A1%A8%E7%A4%BA/</loc>
     
-    <lastmod>2020-11-30T15:27:17.742Z</lastmod>
+    <lastmod>2020-12-15T06:21:44.815Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/12/11/%E6%91%B8%E7%B4%A2%E5%87%BA%E4%B8%80%E7%A7%8D%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E5%AD%A6%E4%B9%A0%E6%96%B9%E5%BC%8F/</loc>
+    
+    <lastmod>2020-12-11T12:45:08.201Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/12/05/pytorch%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-%E4%B8%80/</loc>
+    
+    <lastmod>2020-12-11T04:18:27.380Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/10/27/%E6%84%9F%E6%80%A7%E4%B8%8E%E7%90%86%E6%80%A7/</loc>
+    
+    <lastmod>2020-12-10T13:41:02.351Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://qiyueliuhuo.github.io/2020/11/23/Yolo%E8%A7%A3%E8%AF%BB/</loc>
     
-    <lastmod>2020-11-30T15:21:44.177Z</lastmod>
+    <lastmod>2020-12-10T12:53:59.937Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/</loc>
+    
+    <lastmod>2020-12-04T10:40:36.994Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/07/14/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/</loc>
+    
+    <lastmod>2020-12-04T05:55:01.364Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/05/31/%E6%88%91%E4%BD%BF%E7%94%A8%E7%9A%84-macOS-%E5%BA%94%E7%94%A8/</loc>
+    
+    <lastmod>2020-12-02T15:36:30.051Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/05/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91-%E8%B0%B7%E6%AD%8C%E5%85%8D%E8%B4%B9%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8Google-Cloud-%E6%90%AD%E5%BB%BAv2ray%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/</loc>
+    
+    <lastmod>2020-12-02T15:36:28.421Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2019/05/04/%E4%B9%A6%E7%B1%8D/</loc>
+    
+    <lastmod>2020-12-02T15:35:39.545Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2019/05/19/%E3%80%8A%E4%BA%BA%E6%80%A7%E7%9A%84%E5%BC%B1%E7%82%B9%E3%80%8B%E7%AC%94%E8%AE%B0/</loc>
+    
+    <lastmod>2020-12-02T15:35:12.642Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/04/04/hexo%E7%BC%96%E8%BE%91%E5%AE%9E%E6%97%B6%E6%B8%B8%E8%A7%88%E5%99%A8%E6%98%BE%E7%A4%BA%E6%8F%92%E4%BB%B6browsersync/</loc>
+    
+    <lastmod>2020-12-02T15:34:16.213Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/tags/index.html</loc>
+    
+    <lastmod>2020-12-02T15:20:39.633Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/categories/index.html</loc>
+    
+    <lastmod>2020-12-02T15:20:13.463Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/</loc>
+    
+    <lastmod>2020-12-02T15:12:54.460Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/12/02/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/</loc>
+    
+    <lastmod>2020-12-02T15:09:29.943Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/07/28/R-CNN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/</loc>
+    
+    <lastmod>2020-12-02T15:08:01.630Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/06/13/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B9%8B%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/</loc>
+    
+    <lastmod>2020-12-02T10:22:36.422Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/07/20/%E7%A2%8E%E7%A2%8E%E5%BF%B5/</loc>
+    
+    <lastmod>2020-12-02T10:22:14.989Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2019/02/01/hexo%E5%AD%A6%E4%B9%A0%E5%AE%9E%E8%B7%B5/</loc>
+    
+    <lastmod>2020-12-02T10:11:21.018Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://qiyueliuhuo.github.io/2020/08/01/%E3%80%8A%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/</loc>
+    
+    <lastmod>2020-12-02T10:08:45.104Z</lastmod>
     
   </url>
   
@@ -30,37 +163,9 @@
   </url>
   
   <url>
-    <loc>https://qiyueliuhuo.github.io/2020/10/27/%E6%8E%A8%E7%90%86%E6%96%B9%E5%BC%8F/</loc>
-    
-    <lastmod>2020-10-27T12:45:35.064Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://qiyueliuhuo.github.io/2020/07/28/R-CNN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/</loc>
-    
-    <lastmod>2020-10-27T06:19:05.772Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://qiyueliuhuo.github.io/2020/07/20/%E7%A2%8E%E7%A2%8E%E5%BF%B5/</loc>
-    
-    <lastmod>2020-10-24T09:48:42.503Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://qiyueliuhuo.github.io/2020/07/28/%E9%82%A3%E4%BA%9B%E6%83%85%E8%AF%9D/</loc>
     
     <lastmod>2020-08-21T05:23:57.489Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://qiyueliuhuo.github.io/2020/08/01/%E3%80%8A%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/</loc>
-    
-    <lastmod>2020-08-21T05:23:47.630Z</lastmod>
     
   </url>
   
@@ -72,13 +177,6 @@
   </url>
   
   <url>
-    <loc>https://qiyueliuhuo.github.io/2020/05/31/%E6%88%91%E4%BD%BF%E7%94%A8%E7%9A%84-macOS-%E5%BA%94%E7%94%A8/</loc>
-    
-    <lastmod>2020-08-06T12:31:31.576Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://qiyueliuhuo.github.io/2019/03/31/%E9%98%85%E8%AF%BB%E4%B9%A6%E7%B1%8D%E5%BA%94%E8%AF%A5%E6%9C%89%E7%9A%84%E6%80%81%E5%BA%A6/</loc>
     
     <lastmod>2020-08-06T11:21:31.136Z</lastmod>
@@ -86,30 +184,9 @@
   </url>
   
   <url>
-    <loc>https://qiyueliuhuo.github.io/2019/05/04/%E4%B9%A6%E7%B1%8D/</loc>
-    
-    <lastmod>2020-08-06T11:14:51.772Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://qiyueliuhuo.github.io/2020/07/24/SSH%E8%BF%9E%E6%8E%A5%E3%80%81%E8%BF%9C%E7%A8%8B%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/</loc>
     
     <lastmod>2020-07-24T12:44:39.837Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://qiyueliuhuo.github.io/2019/05/19/%E3%80%8A%E4%BA%BA%E6%80%A7%E7%9A%84%E5%BC%B1%E7%82%B9%E3%80%8B%E7%AC%94%E8%AE%B0/</loc>
-    
-    <lastmod>2020-07-23T09:38:46.445Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://qiyueliuhuo.github.io/2020/06/13/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B9%8B%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/</loc>
-    
-    <lastmod>2020-07-23T08:42:33.467Z</lastmod>
     
   </url>
   
@@ -124,27 +201,6 @@
     <loc>https://qiyueliuhuo.github.io/images/readme.html</loc>
     
     <lastmod>2020-07-02T07:36:46.223Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://qiyueliuhuo.github.io/2020/05/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91-%E8%B0%B7%E6%AD%8C%E5%85%8D%E8%B4%B9%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8Google-Cloud-%E6%90%AD%E5%BB%BAv2ray%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/</loc>
-    
-    <lastmod>2020-06-26T05:04:23.032Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://qiyueliuhuo.github.io/2020/04/04/hexo%E7%BC%96%E8%BE%91%E5%AE%9E%E6%97%B6%E6%B8%B8%E8%A7%88%E5%99%A8%E6%98%BE%E7%A4%BA%E6%8F%92%E4%BB%B6browsersync/</loc>
-    
-    <lastmod>2020-05-24T10:36:45.267Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://qiyueliuhuo.github.io/tags/index.html</loc>
-    
-    <lastmod>2020-05-10T10:18:53.421Z</lastmod>
     
   </url>
   
