@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiyueliuhuo.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="学习数理统计总结。宗旨：用最少的语言去理解数理统计对于问题分析的应用和方法，尽量总结对于某些问题场景一般性思路。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="应用数理统计">
+<meta property="og:url" content="https://qiyueliuhuo.github.io/2021/01/04/%E5%BA%94%E7%94%A8%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1/index.html">
+<meta property="og:site_name" content="七月流火">
+<meta property="og:description" content="学习数理统计总结。宗旨：用最少的语言去理解数理统计对于问题分析的应用和方法，尽量总结对于某些问题场景一般性思路。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20210105004452.png">
+<meta property="og:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20210104154158.png">
+<meta property="article:published_time" content="2021-01-04T07:27:56.000Z">
+<meta property="article:modified_time" content="2021-01-05T12:00:48.772Z">
+<meta property="article:author" content="七月流火">
+<meta property="article:tag" content="学习 思考">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20210105004452.png">
+
+<link rel="canonical" href="https://qiyueliuhuo.github.io/2021/01/04/%E5%BA%94%E7%94%A8%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>应用数理统计 | 七月流火</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?45a8b0e33cead32cd5945b033baa7255";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">七月流火</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">不积跬步，无已至千里; 不积小流，无以成江海。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://qiyueliuhuo.github.io/2021/01/04/%E5%BA%94%E7%94%A8%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="七月流火">
+      <meta itemprop="description" content="程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月流火">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          应用数理统计
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-04 15:27:56" itemprop="dateCreated datePublished" datetime="2021-01-04T15:27:56+08:00">2021-01-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-05 20:00:48" itemprop="dateModified" datetime="2021-01-05T20:00:48+08:00">2021-01-05</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/01/04/%E5%BA%94%E7%94%A8%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/04/%E5%BA%94%E7%94%A8%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>学习数理统计总结。宗旨：用最少的语言去理解数理统计对于问题分析的应用和方法，尽量总结对于某些问题场景一般性思路。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="第一章数理统计的基本概念">第一章：数理统计的基本概念</h2>
+<h3 id="概念思维导图">概念思维导图</h3>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20210105004452.png" /></p>
+<h3 id="常用公式及相关结论">常用公式及相关结论</h3>
+<h4 id="统计量">统计量</h4>
+<ul>
+<li>样本均值：<span class="math inline">\(\bar{X}=\frac{1}{n} \sum_{i=1}^{n} X_{i}\)</span></li>
+<li>样本方差：<span class="math inline">\(S^{2}=\frac{1}{n} \sum_{i=1}^{n}\left(X_{i}-\bar{X}\right)^{2}=\frac{1}{n} \sum_{i=1}^{n} X_{i}^{2}-\bar{X}^{2}\)</span></li>
+<li>修正样本方差：<span class="math inline">\(S^{* 2}=\frac{1}{n-1} \sum_{i=1}^{n}\left(X_{i}-\bar{X}\right)^{2}\)</span></li>
+<li>样本标准差：<span class="math inline">\(S=\sqrt{S^{2}}\)</span></li>
+<li>样本<span class="math inline">\(k\)</span>阶原点矩：<span class="math inline">\(A_{k}=\frac{1}{n} \sum_{i=1}^{n} X_{i}^{k}\)</span></li>
+<li>样本<span class="math inline">\(k\)</span>阶中心矩：<span class="math inline">\(B_{k}=\frac{1}{n} \sum_{i=1}^{n}\left(X_{i}-\bar{X}\right)^{k}\)</span></li>
+<li>休息一会...</li>
+<li>样本中位数：<span class="math inline">\(M e=\left\{\begin{array}{ll}X_{((n+1) / 2)}, &amp; n \text { 为奇数 } \\ \frac{1}{2}\left(X_{(n / 2)}+X_{(n / 2+1)}\right), &amp; n \text { 为偶数 }\end{array}\right.\)</span></li>
+<li>样本极差：<span class="math inline">\(R=X_{(n)}-X_{(1)}\)</span></li>
+</ul>
+<h4 id="抽样分布">抽样分布</h4>
+<p>“统计量的概率分布，所有抽样的样本组成的统计量服从的分布”</p>
+<ul>
+<li>若随机变量 <span class="math inline">\(X_{1}, X_{2}, \cdots, X_{n}\)</span> 相互独立,且都服从标准正态分布, 则随机变量 <span class="math inline">\(X=\sum_{i=1}^{n} X_{i}^{2}\)</span>服从自由度为 <span class="math inline">\(n\)</span> 的 <span class="math inline">\(\chi^{2}\)</span> 分布 <span class="math inline">\(,\)</span> 记为 <span class="math inline">\(X \sim \chi^{2}(n)\)</span>. <a target="_blank" rel="noopener" href="https://gitee.com/qiyueliuhuogitee/blogimages/%20raw/master/img/20210105110104.png">点击查看卡方分布图</a></li>
+<li></li>
+</ul>
+<hr />
+<h2 id="第二章参数估计">第二章：参数估计</h2>
+<h3 id="概念思维导图-1">概念思维导图</h3>
+<p><img src="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20210104154158.png" /></p>
+<h3 id="常用公式及相关结论-1">常用公式及相关结论</h3>
+<h4 id="矩估计">矩估计</h4>
+<ul>
+<li>用一阶：<span class="math inline">\(\bar{X} \stackrel{\text { 令 }}=E X\)</span>。 解释：即用样本的均值等于总体<span class="math inline">\(X\)</span>的期望（均值）。</li>
+<li>用二阶：<span class="math inline">\(\frac{1}{n} \sum_{i=1}^{n} X_{i}^{2} \stackrel{\text { 令 }}{=} E\left(X^{2}\right)\)</span></li>
+</ul>
+<p>注意：</p>
+<ul>
+<li><p>当估计的参数只有一个时，一阶不能用，用二阶。</p></li>
+<li><p>计算<span class="math inline">\(E\left(X^{2}\right)\)</span>时，要用到<span class="math inline">\(E\left(X^{2}\right) = D(X) + [E(X)]^{2}\)</span>，这个公式根据<span class="math inline">\(D(X)=E\left(X^{2}\right)-[E(X)]^{2}\)</span>得到，记后者更加容易些。解释：方差<span class="math inline">\(X\)</span>平方的均值减<span class="math inline">\(X\)</span>均值的平方。</p></li>
+</ul>
+<h4 id="极大似然估计">极大似然估计</h4>
+<p>基于这样的原理：“参数为多少时，观测值出现的概率P最大” <br> 1. 写似然函数 <span class="math inline">\(L\left(x_{1}, x_{2}, \cdots, x_{n} ; \theta\right)=\left\{\begin{array}{l}\prod_{i=1}^{n} p\left(x_{i} ; \theta\right), \\ \prod_{j=1}^{n} f\left(x_{i} ; \theta\right) .\end{array}\right.\)</span> <br> 2. 求参数 <span class="math inline">\(\left\{\begin{array}{l}\text { 有驻点 }: \frac{\mathrm{d} L}{\mathrm{~d} \theta}=0 \text { 或 } \frac{\mathrm{d} \ln L}{\mathrm{~d} \theta} \stackrel{\text { 令 }}{=} 0 \Rightarrow \hat{\theta} \\ \text { 无驻点(单调) : 用定义. }\end{array}\right.\)</span> <br> 3. 不变性？</p>
+<h4 id="区间估计">区间估计</h4>
+<h3 id="相关例题">相关例题</h3>
+<ol type="1">
+<li>设工件长度<span class="math inline">\(X \sim N\left(\mu, \sigma^{2}\right)\)</span>,今抽取10件测量其长度,得到如下数据(单位:cm) <span class="math display">\[
+24.2,23.8,24.0,25.5,25.6,24.8,23.6,24.5,25.3,24.7
+\]</span> 在置信度<span class="math inline">\(0.95\)</span>下,求参数<span class="math inline">\(\mu, \sigma^{2}\)</span>的置信区间。</li>
+</ol>
+<p><strong>解题思路</strong>： <br></p>
+<ol type="1">
+<li>由数理统计相关知识，均值和方差未知，故<span class="math inline">\(\mu\)</span>的置信度为<span class="math inline">\(1-\alpha\)</span>的置信区间为 <span class="math display">\[
+\left(\bar{X}-\frac{S^{*}}{\sqrt{n}} t_{a / 2}(n-1), \bar{X}+\frac{S^{*}}{\sqrt{n}} t_{a / 2}(n-1)\right)
+\]</span></li>
+<li>根据样本值计算<span class="math inline">\(\bar{X}、S^{*}\)</span>，查表得到<span class="math inline">\(t_{0.025}(9)\)</span>，代入上式子即可以求出置信区间。</li>
+</ol>
+<p><strong>总结</strong>：</p>
+<p>所有区间估计一般的套路：<br> 1. 先分类，比如属于正态分布，那么书上给了几种估计正态分布参数的类型，根据问题所属的种类，直接应用结论。 2. 计算结论中所需计算的一些值，如<span class="math inline">\(S^{*}\)</span>，这些值是根据样本计算得来。</p>
+<p><strong>答案</strong>：</p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/qiyueliuhuogitee/blogimages/raw/master/img/20210104162147.png">点击查看答案</a></p>
+<p>参考公式：<a target="_blank" rel="noopener" href="http://www.doc88.com/p-7334821674773.html">点击查看</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/05/%E6%AF%8F%E6%97%A5%E8%8B%B1%E8%AF%AD/" rel="prev" title="每日英语">
+      <i class="fa fa-chevron-left"></i> 每日英语
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/01/%E3%80%8A%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E3%80%8B%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B9%8B%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BD%91/" rel="next" title="《机器学习》课程作业之贝叶斯网">
+      《机器学习》课程作业之贝叶斯网 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">第一章：数理统计的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE"><span class="nav-number">1.1.</span> <span class="nav-text">概念思维导图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F%E5%8F%8A%E7%9B%B8%E5%85%B3%E7%BB%93%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">常用公式及相关结论</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E9%87%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">统计量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%BD%E6%A0%B7%E5%88%86%E5%B8%83"><span class="nav-number">1.2.2.</span> <span class="nav-text">抽样分布</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%E5%8F%82%E6%95%B0%E4%BC%B0%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">第二章：参数估计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE-1"><span class="nav-number">2.1.</span> <span class="nav-text">概念思维导图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F%E5%8F%8A%E7%9B%B8%E5%85%B3%E7%BB%93%E8%AE%BA-1"><span class="nav-number">2.2.</span> <span class="nav-text">常用公式及相关结论</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9F%A9%E4%BC%B0%E8%AE%A1"><span class="nav-number">2.2.1.</span> <span class="nav-text">矩估计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%81%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1"><span class="nav-number">2.2.2.</span> <span class="nav-text">极大似然估计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%BA%E9%97%B4%E4%BC%B0%E8%AE%A1"><span class="nav-number">2.2.3.</span> <span class="nav-text">区间估计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E4%BE%8B%E9%A2%98"><span class="nav-number">2.3.</span> <span class="nav-text">相关例题</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="七月流火"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">七月流火</p>
+  <div class="site-description" itemprop="description">程序员/跑步爱好者/人工智障。 给岁月以文明，而不是给文明以岁月。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">七月流火</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'Bqq9R5gWyWpajSOgwN05dN2W-MdYXbMMI',
+      appKey     : '4cmz7U3V4sJdUbLTG757skov',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>
